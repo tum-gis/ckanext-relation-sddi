@@ -61,13 +61,6 @@ The javascript is also directly included in the main.min.js and not in this ckan
 Here is the Javascript code used for this extension:
 
 ```
-    $(function() {
-    $("#clickMe").click(function() {
-        $("#para").toggleClass("myClass"), $(this).text(function(c, n) {
-            return "+" == n ? "-" : "+"
-        })
-    })
-});
 $(document).ready(function() {
     $(".glyphicon").click(function() {
         $(this).toggleClass("glyphicon-chevron-down").toggleClass("glyphicon-chevron-up")

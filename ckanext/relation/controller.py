@@ -11,6 +11,7 @@ import ckan.lib.base as base
 import ckan.model as model
 import ckan.lib.plugins
 import ckan.lib.render
+import ckan.lib.navl.dictization_functions as dict_fns
 
 
 log = logging.getLogger(__name__)
