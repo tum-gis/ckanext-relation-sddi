@@ -1,0 +1,144 @@
+{% extends "package/read_base.html" %}
+
+
+
+{% block primary_content_inner %}
+{% set pkg = c.pkg_dict %}
+
+    <h1>
+      {% block page_heading %}
+        {{ h.dataset_display_name(pkg) }}
+        {% if pkg.state.startswith('draft') %}
+          [{{ _('Draft') }}]
+        {% endif %}
+        {% if pkg.state == 'deleted' %}
+          [{{ _('Deleted') }}]
+        {% endif %}
+      {% endblock %}
+    </h1>
+
+
+<div class="dataset-item"> 
+<h2>{{ _('References to other resources') }}</h2>
+
+
+
+{% set dependency = h.rel_get_dependency_package(pkg.id) %}
+{% if dependency %}
+      <h3>{{ _('This resource is dependent on the following resources:') }}</h3>
+      <ul class="parent-list">
+      {% for depcy in dependency %}
+	  {% if depcy.state != 'deleted' %}
+      {% set org = depcy.organization %}
+          <li style="font-size:15px; line-height:2;">
+          {{ h.dataset_link(depcy) }} <a href="{{  h.url_for(org.type + '_read', id=org.name, )}}">[{{ org.title }}]</a>
+          </li>
+	  {% endif %}
+      {% endfor %}
+      </ul>
+      {% endif %} 
+
+
+
+{% set parent = h.rel_get_parent_package(pkg.id) %}
+{% if parent %}
+      <h3>{{ _('This resource is part of the following resources:') }}</h3>
+      <ul class="parent-list">
+      {% for par in parent %}
+	  {% if par.state != 'deleted' %}
+      {% set org = par.organization %}
+          <li style="font-size:15px; line-height:2;">
+            {{ h.dataset_link(par) }} <a href="{{  h.url_for(org.type + '_read', id=org.name, )}}">[{{ org.title }}]</a>
+          </li>
+      {% endif %}
+	  {% endfor %}
+      </ul>
+      {% endif %}
+      
+      
+      
+{% set linked = h.rel_get_linked_package(pkg.id) %}
+{% if linked %}
+      <h3>{{ _('This resource referes to the following resources:') }}</h3>
+      <ul class="parent-list">
+      {% for lf in linked %}
+	  {% if lf.state != 'deleted' %}
+      {% set org = lf.organization %}
+          <li style="font-size:15px; line-height:2;">
+          {{ h.dataset_link(lf) }} <a href="{{  h.url_for(org.type + '_read', id=org.name, )}}">[{{ org.title }}] </a>
+          </li>
+      {% endif %}
+	  {% endfor %}
+      </ul>
+      {% endif %}
+
+
+{% if not linked and not dependency and not parent%}
+<i>{{ _('This dataset has no references.') }}</i>
+{% endif %}  
+
+</div>
+
+
+<div class="dataset-item">
+<h2>{{ _('References from other resources') }}</h2>
+
+     
+{% set depend = h.rel_get_depend_package(pkg.id) %}
+{% if depend %}
+      <h3>{{ _('The following resources are dependent on this resource:') }}</h3>
+      <ul class="parent-list">
+      {% for dep in depend %}
+	  {% if dep.state != 'deleted' %}
+      {% set org = dep.organization %}
+          <li style="font-size:15px; line-height:2;" >
+          {{ h.dataset_link(dep) }} <a href="{{  h.url_for(org.type + '_read', id=org.name, )}}">[{{ org.title }}] </a>
+          </li>
+      {% endif %}
+	  {% endfor %}
+      </ul>
+      {% endif %}
+
+
+{% set child = h.rel_get_child_package(pkg.id) %}
+{% if child %}
+    <h3>{{ _('The following resources are part of this resource:') }}</h3>
+      <ul class="parent-list">
+      {% for chl in child %}
+	          {% if chl.state != 'deleted' %}
+      {% set org = chl.organization %}
+          <li style="font-size:15px; line-height:2;">
+            {{ h.dataset_link(chl) }} <a href="{{  h.url_for(org.type + '_read', id=org.name, )}}">[{{ org.title }}]</a>
+          </li>
+	  {% endif %}
+      {% endfor %}
+      </ul>
+      {% endif %}  
+
+
+
+
+{% set links = h.rel_get_links_package(pkg.id) %}
+{% if links %}
+      <h3>{{ _('The following resources are referenced by this resource:') }}</h3>
+      <ul class="parent-list">
+      {% for lt in links %}
+	  {% if lt.state != 'deleted' %}
+      {% set org = lt.organization %}
+          <li style="font-size:15px; line-height:2;">
+            {{ h.dataset_link(lt) }} <a href="{{  h.url_for(org.type + '_read', id=org.name, )}}">[{{ org.title }}]</a>
+          </li>
+      {% endif %}
+	  {% endfor %}
+      </ul>
+       {% endif %}
+
+
+{% if not links and not depend and not child %}
+<i>{{ _('This dataset has no references.') }}</i>
+{% endif %}  
+      
+
+</div>
+
+{% endblock %}

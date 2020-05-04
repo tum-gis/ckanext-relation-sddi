@@ -1,0 +1,7 @@
+{% ckan_extends %}
+
+{% block content_primary_nav %}
+  {{ super() }}
+  {{ h.build_nav_icon('dataset_edit_relation', _('Edit Relationship'), id=pkg.name) }}
+{% endblock %}
+
