@@ -23,7 +23,6 @@ Here is the correct code:
 
         context = {'model': model, 'session': model.Session,
                    'user': c.user, 'auth_user_obj': c.userobj}
-        print('here is delete')				   
 
         try:
             if request.method == 'POST':
@@ -43,11 +42,9 @@ Here is the correct code:
 								get_action('package_relationship_delete')({}, data_dict)
 								print('hier ist ds:')
 					except:
-						print('faild:'+ rel)
-						#pass
-                ####### till here############'''
-				get_action('package_delete')(context, {'id': id})
-#				print('finally deleted!')                
+						pass
+                ####### till here############
+				get_action('package_delete')(context, {'id': id})             
 				h.flash_notice(_('Dataset has been deleted.'))
 				h.redirect_to(controller='package', action='search')							
             c.pkg_dict = get_action('package_show')(context, {'id': id})
