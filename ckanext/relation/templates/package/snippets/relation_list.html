@@ -19,13 +19,13 @@
 
 
 <div class="dataset-item"> 
-<h2>{{ _('References to other resources') }}</h2>
+<h2>{{ 'Verknüpfungen zu anderen Katalogeinträgen' }}</h2>
 
 
 
 {% set dependency = h.rel_get_dependency_package(pkg.id) %}
 {% if dependency %}
-      <h3>{{ _('This resource is dependent on the following resources:') }}</h3>
+      <h3>{{ 'Dieser Katalogeintrag ist abhängig von folgendem Katalogeintrag:' }}</h3>
       <ul class="parent-list">
       {% for depcy in dependency %}
 	  {% if depcy.state != 'deleted' %}
@@ -42,7 +42,7 @@
 
 {% set parent = h.rel_get_parent_package(pkg.id) %}
 {% if parent %}
-      <h3>{{ _('This resource is part of the following resources:') }}</h3>
+      <h3>{{ 'Dieser Katalogeintrag ist ein Teil von folgendem Katalogeintrag:' }}</h3>
       <ul class="parent-list">
       {% for par in parent %}
 	  {% if par.state != 'deleted' %}
@@ -59,7 +59,7 @@
       
 {% set linked = h.rel_get_linked_package(pkg.id) %}
 {% if linked %}
-      <h3>{{ _('This resource referes to the following resources:') }}</h3>
+      <h3>{{ 'Dieser Katalogeintrag weist auf folgenden Katalogeintrag hin:' }}</h3>
       <ul class="parent-list">
       {% for lf in linked %}
 	  {% if lf.state != 'deleted' %}
@@ -74,19 +74,19 @@
 
 
 {% if not linked and not dependency and not parent%}
-<i>{{ _('This dataset has no references.') }}</i>
+<i>{{ 'Dieser Katalogeintrag hat keine Verknüpfungen.' }}</i>
 {% endif %}  
 
 </div>
 
 
 <div class="dataset-item">
-<h2>{{ _('References from other resources') }}</h2>
+<h2>{{ 'Verknüpfungen von anderen Katalogeinträgen' }}</h2>
 
      
 {% set depend = h.rel_get_depend_package(pkg.id) %}
 {% if depend %}
-      <h3>{{ _('The following resources are dependent on this resource:') }}</h3>
+      <h3>{{ 'Die folgenden Katalogeinträgen sind abhängig von diesem Katalogeintrag:' }}</h3>
       <ul class="parent-list">
       {% for dep in depend %}
 	  {% if dep.state != 'deleted' %}
@@ -102,7 +102,7 @@
 
 {% set child = h.rel_get_child_package(pkg.id) %}
 {% if child %}
-    <h3>{{ _('The following resources are part of this resource:') }}</h3>
+    <h3>{{ 'Die folgenden Katalogeinträgen sind ein Teil von diesem Katalogeintrag:' }}</h3>
       <ul class="parent-list">
       {% for chl in child %}
 	          {% if chl.state != 'deleted' %}
@@ -120,7 +120,7 @@
 
 {% set links = h.rel_get_links_package(pkg.id) %}
 {% if links %}
-      <h3>{{ _('The following resources are referenced by this resource:') }}</h3>
+      <h3>{{ 'Die folgenden Katalogeinträge weisen auf diesen Katalogeintrag hin:' }}</h3>
       <ul class="parent-list">
       {% for lt in links %}
 	  {% if lt.state != 'deleted' %}
@@ -135,7 +135,7 @@
 
 
 {% if not links and not depend and not child %}
-<i>{{ _('This dataset has no references.') }}</i>
+<i>{{ 'Keine anderen Katalogeinträge sind mit diesem Eintrag verknüpft.' }}</i>
 {% endif %}  
       
 

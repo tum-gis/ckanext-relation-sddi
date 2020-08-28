@@ -27,7 +27,7 @@ btn-primary {
  {% block save_button %}
         
 		<!--<button style="background-color: #206b82" class="btn btn-primary" name="save" value="go-metadata" type="submit">{% block save_button_text %}{{ _('Update Relationship') }}{% endblock %}</button>-->
-		{% link_for _('Update Relationship'), controller='package', action='read', id='relationship/'+ pkg_name, class_='btn btn-primary' %}
+		{% link_for 'Verknüpfungen aktualisieren', controller='package', action='read', id='relationship/'+ pkg_name, class_='btn btn-primary' %}
 		
       {% endblock %}
 </div>
