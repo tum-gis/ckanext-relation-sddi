@@ -1,6 +1,12 @@
 ckanext-relation
 =====================
 
+This CKAN extension is intended to be used in combination with the [SDDI CKAN Docker container](https://github.com/tum-gis/SDDI-CKAN-Docker).
+
+------------
+Overview
+------------
+
 This extension provides an UI for creating, deleting and viewing relationships between datasets.
 
 In this implementation which is specifically designed for the requirements of [HEF, TUM](http://www.hef.wzw.tum.de/).
@@ -80,7 +86,7 @@ To install ckanext-relation:
 
 2. Install the ckanext-relation Python package into your virtual environment::
 
-       pip install -e 'git+https://github.com/MandanaMoshref/ckanext-relation.git#egg=ckanext-relation'
+       pip install -e 'git+https://github.com/tum-gis/ckanext-relation-sddi.git#egg=ckanext-relation-sddi'
 
 3. Add ``relation`` to the ``ckan.plugins`` setting in your CKAN
    config file (by default the config file is located at
@@ -105,7 +111,7 @@ Developer installation
 To install ckanext-relation for development, activate your CKAN virtualenv and
 do::
 
-    git clone https://github.com/MandanaMoshref/ckanext-relation.git
+    git clone https://github.com/tum-gis/ckanext-relation-sddi.git
     cd ckanext-relation
     python setup.py develop
 
