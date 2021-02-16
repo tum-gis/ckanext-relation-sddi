@@ -1,0 +1,36 @@
+{% set package = package %} 
+{% set count = h.get_allowable_children_groups_g('main-categories') %}
+{% set main_group = h.get_selected_group(package.groups, 'main-categories') %}
+
+{% resource 'relation/group_label.css' %}     
+
+
+
+
+<ul class="dataset-markers inside">
+{% for main in main_group %}
+    {% if main.name == count[0].name %}
+    <li class="marker zero">
+    {% elif main.name == count[1].name %}
+    <li class="marker one">
+    {% elif main.name == count[2].name %}
+    <li class="marker two">
+    {% elif main.name == count[3].name %}
+    <li class="marker three">
+    {% elif main.name == count[4].name %}
+    <li class="marker four">
+    {% elif main.name == count[5].name %}
+    <li class="marker five">
+    {% elif main.name == count[6].name %}
+    <li class="marker six">
+    {% elif main.name == count[7].name %}
+    <li class="marker seven">
+    {% elif main.name == count[8].name %}
+    <li class="marker eight">
+    {% else%}
+    <li class="marker free">
+    {% endif %}
+    <a href="{{ app_globals.site_url }}/group/{{ main.name }}">{{ main.title }}</a></li>
+{% endfor %}
+
+</ul>

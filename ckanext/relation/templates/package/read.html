@@ -1,0 +1,37 @@
+{% ckan_extends %}
+{% set pkg = c.pkg_dict %}
+
+  <style>
+  .fa.pisca {
+    font-size: 30px;
+    color: red;
+    opacity: 0;
+    animation: anima 1s ease infinite;
+}
+@keyframes anima {
+    to {
+        opacity: 1;
+    }
+}
+</style>
+  
+  {% block package_resources %}
+  {{ super() }}
+
+	{% if h.has_relationship(pkg.id) %}
+	{% set url = app_globals.site_url + "/dataset/relationship/" + pkg.name %}	
+	<div class="alert alert-success" role="alert" style="padding: 10px">
+	<div class="row">
+	<div class="col-md-1"> <i class= "fa fa-link fa-spin" style="margin-left: 8px; margin-top: 5px; font-size:35px; color:black;"></i>
+	</div>
+	<div class="col-md-11"> <p style="margin-bottom: auto"> {% trans url=url %}This catalog entry is linked to others. To see all relationships please click <a class="alert-link" href="{{ url }}">here</a> or click on the tab <b>"Relationships"</b> at top of this page.{% endtrans %}</p> </div>
+	</div>
+	</div>
+
+	{% endif %}
+
+  {% endblock %}
+  
+ 
+ 
+ 

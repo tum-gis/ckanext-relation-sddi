@@ -1,0 +1,150 @@
+.alert {
+  padding: 8px !important; 
+}
+.row {
+  display: flex;
+}
+.column {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.inside {
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+.dataset-markers {
+  list-style-type: none;
+  padding: 0;
+  float: left;
+}
+
+.dataset-markers .marker {
+  width: 126px;
+  line-height: 18px;
+  margin: 0.5px 0.5px;
+  background: #888;
+}
+
+
+.dataset-markers .marker.main-g {
+  background: #2980b9;
+}
+
+
+.dataset-markers .marker.zero {
+  background: #27ae60;
+}
+
+.dataset-markers .marker.zero:after {
+  border-right-color: #1e8449;
+}
+
+.dataset-markers .marker.one {
+  background: #2980b9;
+}
+
+.dataset-markers .marker.one:after {
+  border-right-color: #2472a4;
+}
+
+.dataset-markers .marker.two {
+  background: #2c3e50;
+}
+
+.dataset-markers .marker.two:after {
+  border-right-color: #233140;
+}
+
+.dataset-markers .marker.three {
+  background: #e67e22;
+}
+
+.dataset-markers .marker.three:after {
+  border-right-color: #bf6515;
+}
+
+.dataset-markers .marker.four {
+  background: #9b59b6;
+}
+
+.dataset-markers .marker.four:after {
+  border-right-color: #8e44ad;
+}
+
+.dataset-markers .marker.five {
+  background: #1abc9c;
+}
+
+.dataset-markers .marker.five:after {
+  border-right-color: #17a689;
+}
+
+.dataset-markers .marker.six {
+  background: #f1c40f;
+}
+
+.dataset-markers .marker.six:after {
+  border-right-color: #dab10d;
+}
+
+.dataset-markers .marker.seven {
+  background: #b1455a;
+}
+
+.dataset-markers .marker.seven:after {
+  border-right-color: #8f3748;
+}
+
+.dataset-markers .marker.eight {
+  background: #e74c3c;
+}
+
+.dataset-markers .marker.eight:after {
+  border-right-color: #cd3121;
+}
+
+.dataset-markers .marker.free {
+  background: #7f8c8d;
+}
+
+.dataset-markers .marker.free:after {
+  border-right-color: #667273;
+}
+
+.dataset-markers .marker a,
+.dataset-markers .marker div {
+  text-align: center;
+  display: block;
+  padding: 2px 2px;
+  color: #fff;
+  font-size: 12px;
+  font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica';
+  font-weight: bold;
+}
+
+.dataset-markers .marker.small a {
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: clip;
+}
+
+.dataset-list .dataset-markers {
+  margin-right: -25px;
+  margin-left: 10px;
+}
+
+.dataset-marker-type-icon {
+  float: right;
+  margin-left: 25px;
+}
+
+.dataset-marker-type-icon a {
+  color: #000;
+}
+
+.dataset-marker-type-icon a:hover {
+  text-decoration: none;
+  color: #000;
+}
