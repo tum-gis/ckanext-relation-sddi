@@ -26,16 +26,18 @@
 {% set dependency = h.rel_get_dependency_package(pkg.id) %}
 {% if dependency %}
       <h3>{{ 'Dieser Katalogeintrag ist abhängig von folgendem Katalogeintrag:' }}</h3>
-      <ul class="parent-list">
+	  <div class="parent-list">
       {% for depcy in dependency %}
+	  <div class="row">
 	  {% if depcy.state != 'deleted' %}
       {% set org = depcy.organization %}
-          <li style="font-size:15px; line-height:2;">
-          {{ h.dataset_link(depcy) }} <a href="{{  h.url_for(org.type + '_read', id=org.name, )}}">[{{ org.title }}]</a>
-          </li>
-	  {% endif %}
-      {% endfor %}
-      </ul>
+	  	  <div class="col-md-2">{% snippet 'package/snippets/marker.html', package=depcy %}</div>
+          <div class="col-md-10 column">
+          {{ h.dataset_link(depcy) }} <a href="{{  h.url_for(org.type + '_read', id=org.name, )}}">[{{ org.title }}] </a>
+          </div>
+      {% endif %}</div>
+	  {% endfor %}
+      </div>
       {% endif %} 
 
 
@@ -43,16 +45,18 @@
 {% set parent = h.rel_get_parent_package(pkg.id) %}
 {% if parent %}
       <h3>{{ 'Dieser Katalogeintrag ist ein Teil von folgendem Katalogeintrag:' }}</h3>
-      <ul class="parent-list">
+	  	  <div class="parent-list">
       {% for par in parent %}
+	  <div class="row">
 	  {% if par.state != 'deleted' %}
       {% set org = par.organization %}
-          <li style="font-size:15px; line-height:2;">
-            {{ h.dataset_link(par) }} <a href="{{  h.url_for(org.type + '_read', id=org.name, )}}">[{{ org.title }}]</a>
-          </li>
-      {% endif %}
+	  	  <div class="col-md-2">{% snippet 'package/snippets/marker.html', package=par %}</div>
+          <div class="col-md-10 column">
+          {{ h.dataset_link(par) }} <a href="{{  h.url_for(org.type + '_read', id=org.name, )}}">[{{ org.title }}] </a>
+          </div>
+      {% endif %}</div>
 	  {% endfor %}
-      </ul>
+      </div>
       {% endif %}
       
       
@@ -60,16 +64,18 @@
 {% set linked = h.rel_get_linked_package(pkg.id) %}
 {% if linked %}
       <h3>{{ 'Dieser Katalogeintrag weist auf folgenden Katalogeintrag hin:' }}</h3>
-      <ul class="parent-list">
+      <div class="parent-list">
       {% for lf in linked %}
+	  <div class="row">
 	  {% if lf.state != 'deleted' %}
+	  	  <div class="col-md-2" >{% snippet 'package/snippets/marker.html', package=lf %}</div>
       {% set org = lf.organization %}
-          <li style="font-size:15px; line-height:2;">
+          <div class="col-md-10 column">
           {{ h.dataset_link(lf) }} <a href="{{  h.url_for(org.type + '_read', id=org.name, )}}">[{{ org.title }}] </a>
-          </li>
-      {% endif %}
+          </div>
+      {% endif %}</div>
 	  {% endfor %}
-      </ul>
+      </div>
       {% endif %}
 
 
@@ -87,32 +93,36 @@
 {% set depend = h.rel_get_depend_package(pkg.id) %}
 {% if depend %}
       <h3>{{ 'Die folgenden Katalogeinträgen sind abhängig von diesem Katalogeintrag:' }}</h3>
-      <ul class="parent-list">
+	  	  <div class="parent-list">
       {% for dep in depend %}
+	  <div class="row">
 	  {% if dep.state != 'deleted' %}
       {% set org = dep.organization %}
-          <li style="font-size:15px; line-height:2;" >
+	  	  <div class="col-md-2">{% snippet 'package/snippets/marker.html', package=dep %}</div>
+          <div class="col-md-10 column">
           {{ h.dataset_link(dep) }} <a href="{{  h.url_for(org.type + '_read', id=org.name, )}}">[{{ org.title }}] </a>
-          </li>
-      {% endif %}
+          </div>
+      {% endif %}</div>
 	  {% endfor %}
-      </ul>
+      </div>
       {% endif %}
 
 
 {% set child = h.rel_get_child_package(pkg.id) %}
 {% if child %}
     <h3>{{ 'Die folgenden Katalogeinträgen sind ein Teil von diesem Katalogeintrag:' }}</h3>
-      <ul class="parent-list">
-      {% for chl in child %}
+	  <div class="parent-list">
+	        {% for chl in child %}
+				  <div class="row">
 	          {% if chl.state != 'deleted' %}
       {% set org = chl.organization %}
-          <li style="font-size:15px; line-height:2;">
-            {{ h.dataset_link(chl) }} <a href="{{  h.url_for(org.type + '_read', id=org.name, )}}">[{{ org.title }}]</a>
-          </li>
-	  {% endif %}
-      {% endfor %}
-      </ul>
+	  	  <div class="col-md-2">{% snippet 'package/snippets/marker.html', package=chl %}</div>
+          <div class="col-md-10 column">
+          {{ h.dataset_link(chl) }} <a href="{{  h.url_for(org.type + '_read', id=org.name, )}}">[{{ org.title }}] </a>
+          </div>
+      {% endif %}</div>
+	  {% endfor %}
+      </div>
       {% endif %}  
 
 
@@ -121,16 +131,19 @@
 {% set links = h.rel_get_links_package(pkg.id) %}
 {% if links %}
       <h3>{{ 'Die folgenden Katalogeinträge weisen auf diesen Katalogeintrag hin:' }}</h3>
-      <ul class="parent-list">
+	  	  <div class="parent-list">
       {% for lt in links %}
+	  <div class="row">
 	  {% if lt.state != 'deleted' %}
       {% set org = lt.organization %}
-          <li style="font-size:15px; line-height:2;">
-            {{ h.dataset_link(lt) }} <a href="{{  h.url_for(org.type + '_read', id=org.name, )}}">[{{ org.title }}]</a>
-          </li>
+	  	  <div class="col-md-2">{% snippet 'package/snippets/marker.html', package=lt %}</div>
+          <div class="col-md-10 column">
+          {{ h.dataset_link(lt) }} <a href="{{  h.url_for(org.type + '_read', id=org.name, )}}">[{{ org.title }}] </a>
+          </div>
       {% endif %}
+	  </div>
 	  {% endfor %}
-      </ul>
+      </div>
        {% endif %}
 
 
@@ -142,3 +155,4 @@
 </div>
 
 {% endblock %}
+

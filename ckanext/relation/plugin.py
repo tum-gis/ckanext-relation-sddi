@@ -15,6 +15,8 @@ def has_relationship(id):
     )
     if relationship:
         rel = bool(relationship)
+    else:
+        rel = 0
     return rel
 
 
@@ -216,7 +218,7 @@ class RelationPlugin(p.SingletonPlugin):
         # add our templates
         p.toolkit.add_template_directory(config, "templates")
         #p.toolkit.add_public_directory(config, "public")
-        #p.toolkit.add_resource("fanstatic", "ckanext-relation")
+        p.toolkit.add_resource("fanstatic", "relation")
 
     def get_helpers(self):
         """Register the functions above as template helper functions.
