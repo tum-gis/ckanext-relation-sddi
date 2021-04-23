@@ -2,7 +2,7 @@
 
 {% set pkg = c.pkg_dict %}
 {% set action = form_action or h.url_for(c.link) %}
-{% set placeholder = _('Search datasets...') %}
+{% set placeholder = _('Search resources...') %}
 
   <style> 
             div.scroll { 
@@ -112,7 +112,7 @@
  </section>
   <section>
     {% block rel_linked_edit %}
-        {% snippet 'package/snippets/edit_form.html', form_id='dataset-search-lnk', target='lnk', field_search ='field-giant-search3', ref_id = 'ref_id3', query_rel=h.rel_get_linked_package(pkg.id), type='links_to', query=c.q, sorting=sorting, sorting_selected=c.sort_by_selected, count=c.page.item_count, placeholder=_('Search resources') + '...', facets=facets, error=c.query_error, fields=c.fields, title=_('This resource referes to the following resources:')	%}
+        {% snippet 'package/snippets/edit_form.html', form_id='dataset-search-lnk', target='lnk', field_search ='field-giant-search3', ref_id = 'ref_id3', query_rel=h.rel_get_linked_package(pkg.id), type='links_to', query=c.q, sorting=sorting, sorting_selected=c.sort_by_selected, count=c.page.item_count, placeholder=_('Search resources') + '...', facets=facets, error=c.query_error, fields=c.fields, title=_('This resource refers to the following resources:')	%}
 	{% endblock %}
  </section>
   </section>

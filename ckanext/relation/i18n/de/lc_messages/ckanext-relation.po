@@ -19,6 +19,13 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.7.0\n"
 
+#: ckanext/relation/templates/package/edit_fomr.html
+msgid "Resource"
+msgstr "Katalogeintrag"
+
+msgid "This resource has no references."
+msgstr "Dieser Katalogeintrag hat keine Verweise."
+
 #: ckanext/relation/controller.py:77
 msgid "Relationship not found"
 msgstr "Verknüpfung nicht gefunden"
@@ -41,7 +48,7 @@ msgid "Edit view"
 msgstr "Verknüpfungen bearbeiten"
 
 #: ckanext/relation/templates/package/new_data_relation.html:6
-msgid "Add Relationships to the dataset"
+msgid "Add Relationships to the resource"
 msgstr "Verknüpfungen zum Katalogeintrag hinzufügen"
 
 #: ckanext/relation/templates/package/new_data_relation.html:12
@@ -62,7 +69,7 @@ msgid "Relationships"
 msgstr "Verknüpfungen"
 
 #: ckanext/relation/templates/package/snippets/data_relation_fields.html:5
-msgid "Search datasets..."
+msgid "Search resources..."
 msgstr "Katalogeintrag suchen..."
 
 #: ckanext/relation/templates/package/snippets/data_relation_fields.html:102
@@ -87,7 +94,7 @@ msgstr "Dieser Katalogeintrag ist ein Teil von folgendem Katalogeintrag:"
 
 #: ckanext/relation/templates/package/snippets/data_relation_fields.html:115
 #: ckanext/relation/templates/package/snippets/relation_list.html:102
-msgid "This resource referes to the following resources:"
+msgid "This resource refers to the following resources:"
 msgstr "Dieser Katalogeintrag weist auf folgenden Katalogeintrag hin:"
 
 #: ckanext/relation/templates/package/snippets/edit_data_relation_fields.html:29
@@ -102,10 +109,10 @@ msgstr "Verknüpfungen aus diesem Katalogeintrag entfernen"
 #: ckanext/relation/templates/package/snippets/edit_form.html:37
 #: ckanext/relation/templates/package/snippets/relation_list.html:124
 #: ckanext/relation/templates/package/snippets/relation_list.html:209
-msgid "This dataset has no references."
-msgstr "Dieser Datensatz hat noch keine Verknüpfungen"
+msgid "This resource has no references."
+msgstr "Dieser Katalogeintrag hat noch keine Verknüpfungen"
 
-msgid "No other catalog entries have relations to this dataset."
+msgid "No other catalog entries have relations to this resource."
 msgstr "Keine anderen Katalogeinträge sind mit diesem Eintrag verknüpft."
 #: ckanext/relation/templates/package/snippets/edit_form.html:52
 #: ckanext/relation/templates/package/snippets/resource_form.html:80
@@ -114,7 +121,7 @@ msgstr "Verknüpfung hinzufügen"
 
 #: ckanext/relation/templates/package/snippets/edit_form.html:84
 msgid "Add relationship to this resource"
-msgstr "Eine Verknüpfung zu diesem Datensatz herstellen"
+msgstr "Eine Verknüpfung zu diesem Katalogeintrag herstellen"
 
 #: ckanext/relation/templates/package/snippets/relation_list.html:37
 msgid "Connected Resources - Click on a node to go to that resource page."

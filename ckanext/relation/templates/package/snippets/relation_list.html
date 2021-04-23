@@ -96,7 +96,7 @@
       
 {% set linked = h.rel_get_linked_package(pkg.id) %}
 {% if linked %}
-      <h3>{{ _('This resource referes to the following resources:') }}</h3>
+      <h3>{{ _('This resource refers to the following resources:') }}</h3>
       <div class="parent-list">
       {% for lf in linked %}
 	  <div class="row">
@@ -118,7 +118,7 @@
 
 
 {% if not linked and not dependency and not parent%}
-<i>{{ _('This dataset has no references.') }}</i>
+<i>{{ _('This resource has no references.') }}</i>
 {% endif %}  
 
 </div>
@@ -199,7 +199,7 @@
 
 
 {% if not links and not depend and not child %}
-<i>{{ _('No other catalog entries have relations to this dataset.') }}</i>
+<i>{{ _('No other catalog entries have relations to this resource.') }}</i>
 {% endif %}  
       
 
