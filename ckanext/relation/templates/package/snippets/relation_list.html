@@ -1,31 +1,54 @@
 {% extends "package/read_base.html" %}
 
+{% resource 'relation/group_label.css' %}
+
+{% block header %}
+{{ super() }}
+<script src="https://code.jquery.com/jquery-2.0.3.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+{% resource 'relation/style.css' %}
+<script src="//cdnjs.cloudflare.com/ajax/libs/cytoscape/2.5.4/cytoscape.min.js"></script>
+
+<script src="https://cdn.rawgit.com/cpettitt/dagre/v0.7.4/dist/dagre.min.js"></script>
+<script src="https://cdn.rawgit.com/cytoscape/cytoscape.js-dagre/1.1.2/cytoscape-dagre.js"></script>
+
+{% endblock %}  
 
 
 {% block primary_content_inner %}
 {% set pkg = c.pkg_dict %}
 
-    <h1>
-      {% block page_heading %}
-        {{ h.dataset_display_name(pkg) }}
-        {% if pkg.state.startswith('draft') %}
-          [{{ _('Draft') }}]
-        {% endif %}
-        {% if pkg.state == 'deleted' %}
-          [{{ _('Deleted') }}]
-        {% endif %}
-      {% endblock %}
-    </h1>
+{% set graph_nodes = {} %}
+
+<h1>
+  {% block page_heading %}
+    {{ h.dataset_display_name(pkg) }}
+    {% if pkg.state.startswith('draft') %}
+      [{{ _('Draft') }}]
+    {% endif %}
+    {% if pkg.state == 'deleted' %}
+      [{{ _('Deleted') }}]
+    {% endif %}
+  {% endblock %}
+</h1>
+
+    <!-- graph : start -->
+    <div class="panel panel-primary">
+      <div class="panel-heading" style="background-color: #0065bd; border-color: #0065bd;">{% trans %}Connected Resources - Click on a node to go to that resource page.{% endtrans %}</div>
+      <div class="panel-body">
+        <div id="cy"></div>
+      </div>
+    </div>
+    <!-- graph : end -->
 
 
 <div class="dataset-item"> 
-<h2>{{ 'Verknüpfungen zu anderen Katalogeinträgen' }}</h2>
 
-
+<h2>{{ _('References to other resources') }}</h2>
 
 {% set dependency = h.rel_get_dependency_package(pkg.id) %}
 {% if dependency %}
-      <h3>{{ 'Dieser Katalogeintrag ist abhängig von folgendem Katalogeintrag:' }}</h3>
+      <h3>{{ _('This resource is dependent on the following resources:') }}</h3>
 	  <div class="parent-list">
       {% for depcy in dependency %}
 	  <div class="row">
@@ -36,6 +59,11 @@
           {{ h.dataset_link(depcy) }} <a href="{{  h.url_for(org.type + '_read', id=org.name, )}}">[{{ org.title }}] </a>
           </div>
       {% endif %}</div>
+      {% with package=depcy %}
+      {% from "package/snippets/marker.html" import col with context %}
+      {% set color = col()%}
+      {% do graph_nodes.update ({depcy.title+'~'+depcy.id+'~'+color: 'dependency'}) %}
+      {% endwith %}
 	  {% endfor %}
       </div>
       {% endif %} 
@@ -44,7 +72,7 @@
 
 {% set parent = h.rel_get_parent_package(pkg.id) %}
 {% if parent %}
-      <h3>{{ 'Dieser Katalogeintrag ist ein Teil von folgendem Katalogeintrag:' }}</h3>
+      <h3>{{ _('This resource is part of the following resources:') }}</h3>
 	  	  <div class="parent-list">
       {% for par in parent %}
 	  <div class="row">
@@ -55,6 +83,11 @@
           {{ h.dataset_link(par) }} <a href="{{  h.url_for(org.type + '_read', id=org.name, )}}">[{{ org.title }}] </a>
           </div>
       {% endif %}</div>
+      {% with package=par %}
+      {% from "package/snippets/marker.html" import col with context %}
+      {% set color = col()%}
+      {% do graph_nodes.update ({par.title+'~'+par.id+'~'+color: 'parent'}) %}
+      {% endwith %}
 	  {% endfor %}
       </div>
       {% endif %}
@@ -63,7 +96,7 @@
       
 {% set linked = h.rel_get_linked_package(pkg.id) %}
 {% if linked %}
-      <h3>{{ 'Dieser Katalogeintrag weist auf folgenden Katalogeintrag hin:' }}</h3>
+      <h3>{{ _('This resource referes to the following resources:') }}</h3>
       <div class="parent-list">
       {% for lf in linked %}
 	  <div class="row">
@@ -74,25 +107,30 @@
           {{ h.dataset_link(lf) }} <a href="{{  h.url_for(org.type + '_read', id=org.name, )}}">[{{ org.title }}] </a>
           </div>
       {% endif %}</div>
+      {% with package=lf %}
+      {% from "package/snippets/marker.html" import col with context %}
+      {% set color = col()%}
+      {% do graph_nodes.update ({lf.title+'~'+lf.id+'~'+color: 'linked'}) %}
+      {% endwith %}
 	  {% endfor %}
       </div>
       {% endif %}
 
 
 {% if not linked and not dependency and not parent%}
-<i>{{ 'Dieser Katalogeintrag hat keine Verknüpfungen.' }}</i>
+<i>{{ _('This dataset has no references.') }}</i>
 {% endif %}  
 
 </div>
 
 
 <div class="dataset-item">
-<h2>{{ 'Verknüpfungen von anderen Katalogeinträgen' }}</h2>
+<h2>{{ _('References from other resources') }}</h2>
 
      
 {% set depend = h.rel_get_depend_package(pkg.id) %}
 {% if depend %}
-      <h3>{{ 'Die folgenden Katalogeinträgen sind abhängig von diesem Katalogeintrag:' }}</h3>
+      <h3>{{ _('The following resources are dependent on this resource:') }}</h3>
 	  	  <div class="parent-list">
       {% for dep in depend %}
 	  <div class="row">
@@ -103,6 +141,11 @@
           {{ h.dataset_link(dep) }} <a href="{{  h.url_for(org.type + '_read', id=org.name, )}}">[{{ org.title }}] </a>
           </div>
       {% endif %}</div>
+      {% with package=dep %}
+      {% from "package/snippets/marker.html" import col with context %}
+      {% set color = col()%}
+      {% do graph_nodes.update ({dep.title+'~'+dep.id+'~'+color: 'depend'}) %}
+      {% endwith %}
 	  {% endfor %}
       </div>
       {% endif %}
@@ -110,7 +153,7 @@
 
 {% set child = h.rel_get_child_package(pkg.id) %}
 {% if child %}
-    <h3>{{ 'Die folgenden Katalogeinträgen sind ein Teil von diesem Katalogeintrag:' }}</h3>
+    <h3>{{ _('The following resources are part of this resource:') }}</h3>
 	  <div class="parent-list">
 	        {% for chl in child %}
 				  <div class="row">
@@ -121,16 +164,19 @@
           {{ h.dataset_link(chl) }} <a href="{{  h.url_for(org.type + '_read', id=org.name, )}}">[{{ org.title }}] </a>
           </div>
       {% endif %}</div>
+      {% with package=chl %}
+      {% from "package/snippets/marker.html" import col with context %}
+      {% set color = col()%}
+      {% do graph_nodes.update ({chl.title+'~'+chl.id+'~'+color: 'child'}) %}
+      {% endwith %}
 	  {% endfor %}
       </div>
       {% endif %}  
 
 
-
-
 {% set links = h.rel_get_links_package(pkg.id) %}
 {% if links %}
-      <h3>{{ 'Die folgenden Katalogeinträge weisen auf diesen Katalogeintrag hin:' }}</h3>
+      <h3>{{ _('The following resources are referenced by this resource:') }}</h3>
 	  	  <div class="parent-list">
       {% for lt in links %}
 	  <div class="row">
@@ -141,6 +187,11 @@
           {{ h.dataset_link(lt) }} <a href="{{  h.url_for(org.type + '_read', id=org.name, )}}">[{{ org.title }}] </a>
           </div>
       {% endif %}
+      {% with package=lt %}
+      {% from "package/snippets/marker.html" import col with context %}
+      {% set color = col()%}
+      {% do graph_nodes.update ({lt.title+'~'+lt.id+'~'+color: 'links'}) %}
+      {% endwith %}
 	  </div>
 	  {% endfor %}
       </div>
@@ -148,11 +199,255 @@
 
 
 {% if not links and not depend and not child %}
-<i>{{ 'Keine anderen Katalogeinträge sind mit diesem Eintrag verknüpft.' }}</i>
+<i>{{ _('No other catalog entries have relations to this dataset.') }}</i>
 {% endif %}  
       
 
 </div>
 
-{% endblock %}
+{% set pkg_col = namespace(color='') %}
+{% with package=pkg %}
+      {% from "package/snippets/marker.html" import col with context %}
+      {% set pkg_col.color = col()%}
+{% endwith %}
+{% set pkg_col = pkg_col.color %}
 
+
+  <ul class="dataset-markers inside"> 
+      <li class="marker zero">
+      <li class="marker one">
+      <li class="marker two">
+      <li class="marker three">
+      <li class="marker four">
+      <li class="marker five">
+      <li class="marker six">
+      <li class="marker seven">
+      <li class="marker eight">
+      <li class="marker free">
+  </ul>
+
+<script>
+
+  function color(cls){
+    //col = cls.replace(' ', '.');
+    col = cls.trim();
+    ele = document.querySelector(col);
+    style = getComputedStyle(ele);
+    var color = style.getPropertyValue('background-color');
+    color_rgb = color.split('n');
+    return color_rgb[0];
+  };
+
+
+  var data = {
+  nodes: [{
+        data: {
+          id: '0',
+          type: 'source',
+          text: {{h.dataset_display_name(pkg)|tojson}},
+          background_color: color({{pkg_col|tojson}})
+          //, href : "{{h.full_current_url()}}"
+        },
+        classes: 'bottom-right'
+      }]
+    };
+
+  $(function(){
+
+  var cy = window.cy = cytoscape({
+    container: document.getElementById('cy'),
+
+    minZoom: 0.1,
+    maxZoom: 100,
+  
+     layout: {
+      //name: 'dagre', //
+      //name: 'grid',
+      //columns: 4
+      name: 'concentric',
+    },
+
+    style: [{
+        selector: 'node',
+        style: {
+          //'shape':'roundrectangle',
+          //'width': 20,
+          //'height': 20,
+          'content': 'data(text)',
+          //          'text-opacity': 0.5,
+          'text-wrap': 'wrap',
+          'text-max-width': '200px',//'mapData(title.length, 0, 100, 0px, 200px)',
+          //'text-overflow-wrap': 'anywhere',
+          //'text-valign': 'center',
+          'color': 'white',
+          'background-color': 'data(background_color)',
+          'text-outline-width': 2,
+          'text-outline-color': '#222',
+          'font-family': 'helvetica'
+        }
+      },
+      {
+        selector: 'node[type="source"]',
+        style: {
+          'shape': 'octagon'
+      }
+      },
+      {
+        selector: 'edge',
+        style: {
+          'width': 10,
+          "curve-style": "bezier",
+          'target-arrow-shape': 'triangle',
+          'line-color': 'data(color)',
+          'target-arrow-color': 'data(color)',
+          'source-arrow-color': 'data(color)'
+        }
+      },
+      {
+      selector: '.bottom-right',
+      'style': {
+      'text-valign': 'bottom',
+      'text-halign': 'right'
+        }
+      },  
+      {
+        selector: 'node:selected',
+        style: {
+          'background-color': 'yellow'
+        }
+      },
+
+      {
+        selector: 'edge:selected',
+        style: {
+          'width': 15,
+          'content': 'data(type)',
+          'line-color': 'yellow',
+          'target-arrow-color': 'yellow',
+          'source-arrow-color': 'yellow'
+        }
+      }
+    ],
+      elements : data
+  
+    });
+  
+    cy.on('tap', 'node', function(){
+  try { // your browser may block popups
+    window.open( this.data('href'), "_self" );
+  } catch(e){ // fall back on url change
+    window.location.href = this.data('href');
+  }
+});
+
+var relations = {{ graph_nodes |tojson }};
+  var i = 1
+  for(let key in relations){
+    // var date = JSON.stringify(data); 
+    // node
+    var key_split = key.split('~');
+    cy.add({
+      //selectable: false, 
+      nodes: [{
+        data: {
+          id: i,
+          text: (key_split[0].replaceAll('&#34;', '"')),
+          href: key_split[1],
+          background_color: color(key_split[2])
+        },
+        classes: 'bottom-right'
+      }]});
+
+      if (relations[key]=="linked"){
+      cy.add({
+      edges: [{
+          data: {
+            color: 'black', //color(key_split[2]),
+            source: '0',
+            target: i,
+            type: 'links_to'
+          }
+        }] 
+    });
+
+      }
+      else if (relations[key]=="dependency"){
+      cy.add({
+      edges: [{
+          data: {
+            color: 'red', //color(key_split[2]),
+            source: 0,
+            target: i,
+            type: 'depends_on'
+          }
+        }] 
+    });
+
+      }
+      else if (relations[key]=="parent"){
+      cy.add({
+      edges: [{
+          data: {
+            color: 'green', //color(key_split[2]),
+            source: 0,
+            target: i,
+            type: 'part_of'
+          }
+        }] 
+    });
+
+      }
+      else if (relations[key]=="child"){
+      cy.add({
+      edges: [{
+          data: {
+            color: 'green', // color(key_split[2]),
+            source: i,
+            target: 0,
+            type: 'part_of'//parent_of
+          }
+        }] 
+    });
+
+      }
+      else if (relations[key]=="depend"){
+      cy.add({
+      edges: [{
+          data: {
+            color: 'red', //color(key_split[2]),
+            source: i,
+            target: 0,
+            type: 'depends_on' // dependency_of
+          }
+        }] 
+    });
+
+      }
+      else if (relations[key]=="links"){
+      cy.add({
+      edges: [{
+          data: {
+            color: 'black', //color(key_split[2]),
+            source: i,
+            target: 0,
+            type: 'links_to' //linked_from
+          }
+        }] 
+    });
+ 
+      }
+      else{
+      }
+    i++;
+  };
+
+    cy.layout({
+      name: 'concentric',
+  });
+
+    cy.fit(cy.elements(), 2);
+  });
+    
+  </script>
+
+{% endblock %}

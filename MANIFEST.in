@@ -1,1 +1,2 @@
 recursive-include ckanext/relation *.*
+recursive-include ckanext/relation/i18n

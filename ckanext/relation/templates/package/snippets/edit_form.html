@@ -34,7 +34,7 @@
       </tbody>
     </table>
 	{% if not query_rel %}
-	<i> {{ 'Dieser Datensatz hat noch keine Verknüpfungen' }}</i><ol></ol>
+	<i> {{ _('This dataset has no references.') }}</i><ol></ol>
 	{% endif %}
    {% endblock %}
       
@@ -49,7 +49,7 @@
       <div class="panel-heading">
         <h4 class="panel-title">
           <a data-toggle="collapse" data-parent="#accordion" href="#{{ ref_id }}">
-            <span class="fa fa-link text-success"></span> {{ 'Verknüpfung hinzufügen' }}
+            <span class="fa fa-link text-success"></span> {{ _('Add Relationship') }}
             <span class="glyphicon glyphicon-chevron-down pull-right"></span>
           </a>
         </h4>
@@ -81,7 +81,7 @@
           <tr>
             <td class="dataset-details"> {{ h.dataset_link(depcy1) }} </td>
             <td> <a href="{{  h.url_for(org1.type + '_read', id=org1.name, )}}">{{ org1.title }}</a> </td>
-            <td><input name="relation_add.{{ type }}.{{ depcy1.id }}" value="{{ _('Add') }}" type="submit" class="btn btn-success btn-sm media-edit" title="{{ 'Eine Verknüpfung zu diesem Datensatz herstellen' }}"/></td>
+            <td><input name="relation_add.{{ type }}.{{ depcy1.id }}" value="{{ _('Add') }}" type="submit" class="btn btn-success btn-sm media-edit" title="{{ _('Add relationship to this resource') }}"/></td>
           </tr>
 {% endif %}		  
 {#% endif %#}

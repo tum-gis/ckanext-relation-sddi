@@ -1,11 +1,28 @@
+import os
+import sys
 import ckan as ckan
 import ckan.plugins as p
 from ckan.common import c, request
 import ckan.model as model
 import logging
+from ckan.lib.plugins import DefaultTranslation
 
 log = logging.getLogger(__name__)
 
+HERE = os.path.abspath(os.path.dirname(__file__))
+I18N_DIR = os.path.join(HERE, "i18n")
+
+def outgoing_relationship(id):
+    """Return true if the dataset has any relationship, false otherwise."""
+    type = ["depends_on", "child_of" ,"links_to"]
+    for i in type:
+        try:
+            relationship = p.toolkit.get_action("package_relationships_list")(data_dict={"id": id, "rel": i})                
+            rel = bool(relationship)
+            break
+        except:
+            rel = 0
+    return rel
 
 def has_relationship(id):
     """Return true if the dataset has any relationship, false otherwise."""
@@ -200,6 +217,7 @@ class RelationPlugin(p.SingletonPlugin):
     """
 
     p.implements(p.IConfigurer)
+    p.implements(p.ITranslation)                                
     p.implements(p.IConfigurable)
     p.implements(p.ITemplateHelpers)
     p.implements(p.IRoutes, inherit=True)
@@ -217,7 +235,7 @@ class RelationPlugin(p.SingletonPlugin):
 
         # add our templates
         p.toolkit.add_template_directory(config, "templates")
-        #p.toolkit.add_public_directory(config, "public")
+        p.toolkit.add_public_directory(config, "public")
         p.toolkit.add_resource("fanstatic", "relation")
 
     def get_helpers(self):
@@ -237,6 +255,7 @@ class RelationPlugin(p.SingletonPlugin):
             "package_all": package_all,
             "rel_id_list": rel_id_list,
             "has_relationship": has_relationship,
+            "outgoing_relationship": outgoing_relationship,
         }
 
     def before_map(self, map):
@@ -337,3 +356,35 @@ class RelationPlugin(p.SingletonPlugin):
         )
 
         return map
+
+    # def i18n_directory(self):
+        # '''Change the directory of the *.mo translation files
+        # The default implementation assumes the plugin is
+        # ckanext/myplugin/plugin.py and the translations are stored in
+        # i18n/
+        # '''
+        # # assume plugin is called ckanext.<myplugin>.<...>.PluginClass
+        # extension_module_name = '.'.join(self.__module__.split('.')[0:2])
+        # module = sys.modules[extension_module_name]
+        # return os.path.join(os.path.dirname(module.__file__), 'i18n')
+
+    def i18n_directory(self):
+        return I18N_DIR
+
+    def i18n_locales(self):
+        '''Change the list of locales that this plugin handles
+        By default the will assume any directory in subdirectory in the
+        directory defined by self.directory() is a locale handled by this
+        plugin
+        '''
+        directory = self.i18n_directory()
+        return [d for
+                d in os.listdir(directory)
+                if os.path.isdir(os.path.join(directory, d))]
+
+    def i18n_domain(self):
+        '''Change the gettext domain handled by this plugin
+        This implementation assumes the gettext domain is
+        ckanext-{extension name}, hence your pot, po and mo files should be
+        named ckanext-{extension name}.mo'''
+        return 'ckanext-{name}'.format(name=self.name)

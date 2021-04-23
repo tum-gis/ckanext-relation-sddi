@@ -4,6 +4,7 @@
 
 {% resource 'relation/group_label.css' %}     
 
+{% set group_color = namespace(color='') %}
 
 
 
@@ -11,22 +12,31 @@
 {% for main in main_group %}
     {% if main.name == count[0].name %}
     <li class="marker zero">
+    {% set group_color.color = '.marker.zero' %}
     {% elif main.name == count[1].name %}
     <li class="marker one">
+    {% set group_color.color = '.marker.one' %}
     {% elif main.name == count[2].name %}
     <li class="marker two">
+    {% set group_color.color = '.marker.two' %}
     {% elif main.name == count[3].name %}
     <li class="marker three">
+    {% set group_color.color = '.marker.three' %}
     {% elif main.name == count[4].name %}
     <li class="marker four">
+    {% set group_color.color = '.marker.four' %}
     {% elif main.name == count[5].name %}
     <li class="marker five">
+    {% set group_color.color = '.marker.five' %}
     {% elif main.name == count[6].name %}
     <li class="marker six">
+    {% set group_color.color = '.marker.six' %}
     {% elif main.name == count[7].name %}
     <li class="marker seven">
+    {% set group_color.color = '.marker.seven' %}
     {% elif main.name == count[8].name %}
     <li class="marker eight">
+    {% set group_color.color = '.marker.eight' %}
     {% else%}
     <li class="marker free">
     {% endif %}
@@ -34,3 +44,9 @@
 {% endfor %}
 
 </ul>
+
+
+{% macro col()%}
+{% set color = group_color.color %}
+{{color}}
+{% endmacro %}

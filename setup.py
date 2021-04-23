@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '2.0'
+version = '3.0'
 
 setup(
     name='ckanext-relation',
@@ -20,10 +20,17 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[
-        # -*- Extra requirements: -*-
+        'jinja2',
     ],
     entry_points='''
         [ckan.plugins]
         relation=ckanext.relation.plugin:RelationPlugin
     ''',
+        message_extractors={
+        'ckanext': [
+            ('**.py', 'python', None),
+            ('**.js', 'javascript', None),
+            ('**/templates/**.html', 'ckan', None),
+        ],
+    }
 )

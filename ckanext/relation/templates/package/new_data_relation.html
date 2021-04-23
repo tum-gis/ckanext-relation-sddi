@@ -3,13 +3,13 @@
 
 {% set logged_in = true if c.userobj else false %}
 
-{% block subtitle %}{{ _('Add data dictionary to the dataset') }}{% endblock %}
+{% block subtitle %}{{ _('Add Relationships to the dataset') }}{% endblock %}
 
 {% block breadcrumb_content_selected %}{% endblock %}
 {% block breadcrumb_content %}
   {{ super() }}
   {% if pkg %}
-    <li class="active"><a href="#">{{ 'Neue Verknüpfung hinzufügen' }}</a></li>
+    <li class="active"><a href="#">{{ _('Add New Relationships') }}</a></li>
   {% endif %}
 {% endblock %}
 
