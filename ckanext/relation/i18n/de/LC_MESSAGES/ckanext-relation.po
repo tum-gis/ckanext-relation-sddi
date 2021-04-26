@@ -1,0 +1,144 @@
+# German translations for ckanext-relation.
+# Copyright (C) 2021 ORGANIZATION
+# This file is distributed under the same license as the ckanext-relation
+# project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: ckanext-relation 2.0\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2021-03-31 12:18+0200\n"
+"PO-Revision-Date: 2021-03-31 12:20+0200\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: de\n"
+"Language-Team: de <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.7.0\n"
+
+#: ckanext/relation/templates/package/edit_fomr.html
+msgid "Resource"
+msgstr "Katalogeintrag"
+
+msgid "This resource has no references."
+msgstr "Dieser Katalogeintrag hat keine Verweise."
+
+#: ckanext/relation/controller.py:77
+msgid "Relationship not found"
+msgstr "Verknüpfung nicht gefunden"
+
+#: ckanext/relation/controller.py:82
+msgid "Unauthorized to create a relationship for this package"
+msgstr "Nicht berechtigt, eine Verknüpfung für diesen Katalogeintrag zu erstellen"
+
+#: ckanext/relation/controller.py:102
+msgid "Relationship cannot be created"
+msgstr "Verknüpfung kann nicht erstellt werden"
+
+#: ckanext/relation/templates/package/edit_base.html:5
+#: ckanext/relation/templates/package/edit_data_relation.html:13
+msgid "Edit Relationship"
+msgstr "Verknüpfungen bearbeiten"
+
+#: ckanext/relation/templates/package/edit_data_relation.html:8
+msgid "Edit view"
+msgstr "Verknüpfungen bearbeiten"
+
+#: ckanext/relation/templates/package/new_data_relation.html:6
+msgid "Add Relationships to the resource"
+msgstr "Verknüpfungen zum Katalogeintrag hinzufügen"
+
+#: ckanext/relation/templates/package/new_data_relation.html:12
+msgid "Add New Relationships"
+msgstr "Neue Verknüpfung hinzufügen"
+
+#: ckanext/relation/templates/package/read.html:27
+#, python-format
+msgid ""
+"This catalog entry is linked to others. To see all relationships please "
+"click <a class=\"alert-link\" href=\"%(url)s\">here</a> or click on the "
+"tab <b>\"Relationships\"</b> at top of this page."
+msgstr "Dieser Katalogeintrag ist explizit mit anderen verbunden. Um weitere Informationen zu erhalten, gehen Sie bitte auf <a class=\"alert-link\" href=\"%(url)s\"><b>\"Verknüpfungen\"</b></a> (auf den Link oder auf Register \"Verknüpfungen\" oberhalb der Überschrift des Katalogeintrages klicken)."
+
+
+#: ckanext/relation/templates/package/read_base.html:10
+msgid "Relationships"
+msgstr "Verknüpfungen"
+
+#: ckanext/relation/templates/package/snippets/data_relation_fields.html:5
+msgid "Search resources..."
+msgstr "Katalogeintrag suchen..."
+
+#: ckanext/relation/templates/package/snippets/data_relation_fields.html:102
+#: ckanext/relation/templates/package/snippets/relation_list.html:48
+msgid "References to other resources"
+msgstr "Verknüpfungen zu anderen Katalogeinträgen"
+
+#: ckanext/relation/templates/package/snippets/data_relation_fields.html:105
+#: ckanext/relation/templates/package/snippets/relation_list.html:52
+msgid "This resource is dependent on the following resources:"
+msgstr "Dieser Katalogeintrag ist abhängig von folgendem Katalogeintrag:"
+
+#: ckanext/relation/templates/package/snippets/data_relation_fields.html:110
+#: ckanext/relation/templates/package/snippets/data_relation_fields.html:115
+msgid "Search resources"
+msgstr "Ressourcen suchen"
+
+#: ckanext/relation/templates/package/snippets/data_relation_fields.html:110
+#: ckanext/relation/templates/package/snippets/relation_list.html:77
+msgid "This resource is part of the following resources:"
+msgstr "Dieser Katalogeintrag ist ein Teil von folgendem Katalogeintrag:"
+
+#: ckanext/relation/templates/package/snippets/data_relation_fields.html:115
+#: ckanext/relation/templates/package/snippets/relation_list.html:102
+msgid "This resource refers to the following resources:"
+msgstr "Dieser Katalogeintrag weist auf folgenden Katalogeintrag hin:"
+
+#: ckanext/relation/templates/package/snippets/edit_data_relation_fields.html:29
+#: ckanext/relation/templates/package/snippets/edit_data_relation_fields.html:30
+msgid "Update Relationship"
+msgstr "Verknüpfungen aktualisieren"
+
+#: ckanext/relation/templates/package/snippets/edit_form.html:31
+msgid "Remove relationship from this resource"
+msgstr "Verknüpfungen aus diesem Katalogeintrag entfernen"
+
+#: ckanext/relation/templates/package/snippets/edit_form.html:37
+#: ckanext/relation/templates/package/snippets/relation_list.html:124
+#: ckanext/relation/templates/package/snippets/relation_list.html:209
+msgid "This resource has no references."
+msgstr "Dieser Katalogeintrag hat noch keine Verknüpfungen"
+
+msgid "No other catalog entries have relations to this resource."
+msgstr "Keine anderen Katalogeinträge sind mit diesem Eintrag verknüpft."
+#: ckanext/relation/templates/package/snippets/edit_form.html:52
+#: ckanext/relation/templates/package/snippets/resource_form.html:80
+msgid "Add Relationship"
+msgstr "Verknüpfung hinzufügen"
+
+#: ckanext/relation/templates/package/snippets/edit_form.html:84
+msgid "Add relationship to this resource"
+msgstr "Eine Verknüpfung zu diesem Katalogeintrag herstellen"
+
+#: ckanext/relation/templates/package/snippets/relation_list.html:37
+msgid "Connected Resources - Click on a node to go to that resource page."
+msgstr "Verknüpfte Ressourcen - auf einen Knoten klicken, um zu der Ressource zu wechseln."
+
+#: ckanext/relation/templates/package/snippets/relation_list.html:131
+msgid "References from other resources"
+msgstr "Verknüpfungen von anderen Katalogeinträgen"
+
+#: ckanext/relation/templates/package/snippets/relation_list.html:136
+msgid "The following resources are dependent on this resource:"
+msgstr "Die folgenden Katalogeinträgen sind abhängig von diesem Katalogeintrag:"
+
+#: ckanext/relation/templates/package/snippets/relation_list.html:160
+msgid "The following resources are part of this resource:"
+msgstr "Die folgenden Katalogeinträgen sind ein Teil von diesem Katalogeintrag:"
+
+#: ckanext/relation/templates/package/snippets/relation_list.html:184
+msgid "The following resources are referenced by this resource:"
+msgstr "Die folgenden Katalogeinträge weisen auf diesen Katalogeintrag hin:"
