@@ -258,7 +258,7 @@
     container: document.getElementById('cy'),
 
     minZoom: 0.1,
-    maxZoom: 100,
+    //maxZoom: 100,
   
      layout: {
       //name: 'dagre', //
@@ -444,8 +444,11 @@ var relations = {{ graph_nodes |tojson }};
     cy.layout({
       name: 'concentric',
   });
-
-    cy.fit(cy.elements(), 2);
+  
+    //cy.fit(cy.elements(), 2);
+    cy.maxZoom(1.3);
+    cy.fit();
+    cy.maxZoom(100);
   });
     
   </script>
