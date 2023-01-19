@@ -220,7 +220,7 @@ class RelationPlugin(p.SingletonPlugin):
     p.implements(p.ITranslation)                                
     p.implements(p.IConfigurable)
     p.implements(p.ITemplateHelpers)
-    p.implements(p.IRoutes, inherit=True)
+    p.implements(p.IBlueprint, inherit=True)
 
     package_link = "/dataset/"
 
