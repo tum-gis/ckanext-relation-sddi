@@ -70,7 +70,7 @@ def get_child_package(id):
         relationships = p.toolkit.get_action("package_relationships_list")(
             data_dict={"id": id, "rel": "parent_of"}
         )
-    except Exception, e:
+    except Exception as e:
         return {}
 
     children = []
@@ -99,7 +99,7 @@ def get_parent_package(id):
         relationships = p.toolkit.get_action("package_relationships_list")(
             data_dict={"id": id, "rel": "child_of"}
         )
-    except Exception, e:
+    except Exception as e:
         return {}
 
     parents = []
@@ -118,7 +118,7 @@ def get_dependency_package(id):
         relationships = p.toolkit.get_action("package_relationships_list")(
             data_dict={"id": id, "rel": "depends_on"}
         )
-    except Exception, e:
+    except Exception as e:
         return {}
 
     dependencies = []
@@ -139,7 +139,7 @@ def get_depend_package(id):
         relationships = p.toolkit.get_action("package_relationships_list")(
             data_dict={"id": id, "rel": "dependency_of"}
         )
-    except Exception, e:
+    except Exception as e:
         return {}
 
     depend = []
@@ -168,7 +168,7 @@ def get_linked_package(id):
         relationships = p.toolkit.get_action("package_relationships_list")(
             data_dict={"id": id, "rel": "links_to"}
         )
-    except Exception, e:
+    except Exception as e:
         return {}
 
     linked = []
@@ -190,7 +190,7 @@ def get_links_package(id):
         relationships = p.toolkit.get_action("package_relationships_list")(
             data_dict={"id": id, "rel": "linked_from"}
         )
-    except Exception, e:
+    except Exception as e:
         return {}
 
     links = []
