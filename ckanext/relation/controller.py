@@ -298,7 +298,7 @@ class RelationController(BaseController):
 
     """ def delete_ext(self, id):
 
-        # c.linkResource = str("/dataset/edit/" + id)
+        # linkResource = str("/dataset/edit/" + id)
         print("here is delete ext")
 
         if "cancel" in request.params:
