@@ -46,13 +46,11 @@ class RelationController(BaseController):
     def finalrel(self, id, data=None, errors=None):
         if request.method == "POST":
             pass
-        #c.link = str("/dataset/relationship/edit/" + id)
-        link = str("/dataset/relationship/edit/" + id)
+        c.link = str("/dataset/relationship/edit/" + id)
         return render("package/new_data_relation.html", extra_vars={"package_id": id})
 
     def new_relation(self, id):
-        #c.link = str("/dataset/relationship/edit/" + id)
-        link = str("/dataset/relationship/edit/" + id)
+        c.link = str("/dataset/relationship/edit/" + id)
         if request.method == "POST":
             save_action = request.params.get("save")
             print("new data dictionary !!!!!!!!!!!!!!!!")
@@ -120,8 +118,7 @@ class RelationController(BaseController):
     def new_resource_ext(self, id, data=None, errors=None, error_summary=None):
         """ FIXME: This is a temporary action to allow styling of the
         forms. """
-        #c.linkResource = str("/dataset/new_resource/" + id)
-        link = str("/dataset/new_resource/" + id)
+        linkResource = str("/dataset/new_resource/" + id)
 
         if request.method == "POST" and not data:
             save_action = request.params.get("save")
@@ -357,8 +354,7 @@ class RelationController(BaseController):
     def edit_relation(self, id, data=None, errors=None):
 
         try:
-            #c.link = str("/dataset/relationship/new_relationship/" + id)
-            link = str("/dataset/relationship/new_relationship/" + id)
+            c.link = str("/dataset/relationship/new_relationship/" + id)
             """context = {
                 "model": model,
                 "session": model.Session,
