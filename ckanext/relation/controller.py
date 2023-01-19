@@ -3,7 +3,7 @@ import ckan.plugins as p
 from ckan.lib.base import BaseController
 import ckan.lib.helpers as h
 from ckan.common import OrderedDict, _, json, request, c, g, response, config
-from urllib import urlencode
+from urllib.parse import urlencode
 import cgi
 from paste.deploy.converters import asbool
 import ckan.logic as logic
@@ -151,7 +151,7 @@ class RelationController(BaseController):
 
             # see if we have any data that we are trying to save
             data_provided = False
-            for key, value in data.iteritems():
+            for key, value in data.items():
                 if (
                     value or isinstance(value, cgi.FieldStorage)
                 ) and key != "resource_type":
@@ -220,7 +220,7 @@ class RelationController(BaseController):
                     get_action("resource_update")(context, data)
                 else:
                     get_action("resource_create")(context, data)
-            except ValidationError, e:
+            except ValidationError as e:
                 errors = e.error_dict
                 error_summary = e.error_summary
                 return self.new_resource_ext(id, data, errors, error_summary)
