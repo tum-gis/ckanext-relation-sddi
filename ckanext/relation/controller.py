@@ -119,7 +119,7 @@ class RelationController(BaseController):
     def new_resource_ext(self, id, data=None, errors=None, error_summary=None):
         """ FIXME: This is a temporary action to allow styling of the
         forms. """
-        #linkResource = str("/dataset/new_resource/" + id)
+        linkResource = str("/dataset/new_resource/" + id)
 
         if request.method == "POST" and not data:
             save_action = request.params.get("save")
