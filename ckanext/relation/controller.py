@@ -47,11 +47,11 @@ class RelationController(BaseController):
     def finalrel(self, id, data=None, errors=None):
         if request.method == "POST":
             pass
-        c.link = str("/dataset/relationship/edit/" + id)
+        link = str("/dataset/relationship/edit/" + id)
         return render("package/new_data_relation.html", extra_vars={"package_id": id})
 
     def new_relation(self, id):
-        c.link = str("/dataset/relationship/edit/" + id)
+        link = str("/dataset/relationship/edit/" + id)
         if request.method == "POST":
             save_action = request.params.get("save")
             print("new data dictionary !!!!!!!!!!!!!!!!")
@@ -112,7 +112,7 @@ class RelationController(BaseController):
 
             if save_action == "go-metadata":
                 # XXX race condition if another user edits/deletes
-                h.redirect_to(controller="package", action="read", id=id)
+                h.redirect_to('package.read', id=id)
 
         redirect("/dataset/relationship/edit/" + id)
 
@@ -179,7 +179,7 @@ class RelationController(BaseController):
 
                 if save_action == "go-dataset":
                     # go to final stage of adddataset
-                    redirect(h.url_for(controller="package", action="edit", id=id))
+                    redirect(h.url_for('package.edit', id=id))
                 # see if we have added any resources
                 try:
                     data_dict = get_action("package_show")(context, {"id": id})
@@ -212,7 +212,7 @@ class RelationController(BaseController):
                     dict(context, allow_state_change=True),
                     dict(data_dict, state="active"),
                 )
-                redirect(h.url_for(controller="package", action="read", id=id))
+                redirect(h.url_for('package.read', id=id))
 
             data["package_id"] = id
             try:
@@ -237,7 +237,7 @@ class RelationController(BaseController):
                     dict(data_dict, state="active"),
                 )
                 h.flash_notice(_("Dataset has been deleted."))
-                h.redirect_to(controller="package", action="read", id=id)
+                h.redirect_to('package.read', id=id)
 
             elif save_action == "go-datadict":
                 data_dict = get_action("package_show")(context, {"id": id})
@@ -253,13 +253,13 @@ class RelationController(BaseController):
             # redirect(h.url_for(controller='package', action='finaldict', id=id))
             elif save_action == "go-dataset":
                 # go to first stage of add dataset
-                h.redirect_to(controller="package", action="edit", id=id)
+                h.redirect_to('package.edit', id=id)
             elif save_action == "go-dataset-complete":
                 # go to first stage of add dataset
-                h.redirect_to(controller="package", action="read", id=id)
+                h.redirect_to('package.edit', id=id)
             else:
                 # add more resources
-                h.redirect_to(controller="package", action="new_resource", id=id)
+                h.redirect_to('package.new_resource', id=id)
         # get resources for sidebar
         context = {
             "model": model,
