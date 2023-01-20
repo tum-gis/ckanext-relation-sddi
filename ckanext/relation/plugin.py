@@ -79,7 +79,7 @@ def get_child_package(id):
             try:
                 access = p.toolkit.check_access(
                     "package_show",
-                    context={"user": c.user},
+                    context={"user": user},
                     data_dict={"id": rel["object"]},
                 )
                 child = p.toolkit.get_action("package_show")(
@@ -148,7 +148,7 @@ def get_depend_package(id):
             try:
                 access = p.toolkit.check_access(
                     "package_show",
-                    context={"user": c.user},
+                    context={"user": user},
                     data_dict={"id": rel["object"]},
                 )
                 dep = p.toolkit.get_action("package_show")(
@@ -199,7 +199,7 @@ def get_links_package(id):
             try:
                 access = p.toolkit.check_access(
                     "package_show",
-                    context={"user": c.user},
+                    context={"user": user},
                     data_dict={"id": rel["object"]},
                 )
                 link = p.toolkit.get_action("package_show")(
