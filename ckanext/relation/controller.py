@@ -355,7 +355,7 @@ class RelationController(BaseController):
     def edit_relation(self, id, data=None, errors=None):
 
         try:
-            c.link = str("/dataset/relationship/new_relationship/" + id)
+            link = str("/dataset/relationship/new_relationship/" + id)
             """context = {
                 "model": model,
                 "session": model.Session,
