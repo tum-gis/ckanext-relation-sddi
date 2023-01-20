@@ -1,8 +1,8 @@
 import os
 import sys
 import ckan as ckan
-import ckan.plugins as p
-from ckan.common import c, request
+import ckan.plugins as plugins
+from ckan.common import config, request
 import ckan.model as model
 import logging
 from ckan.lib.plugins import DefaultTranslation
