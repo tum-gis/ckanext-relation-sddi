@@ -58,8 +58,8 @@ class RelationController(BaseController):
             context = {
                 "model": model,
                 "session": model.Session,
-                "user": c.user or c.author,
-                "auth_user_obj": c.userobj,
+                "user": c.user or author,
+                "auth_user_obj": userobj,
             }
 
             # Remove button in the edit page
@@ -146,8 +146,8 @@ class RelationController(BaseController):
             context = {
                 "model": model,
                 "session": model.Session,
-                "user": c.user or c.author,
-                "auth_user_obj": c.userobj,
+                "user": user or author,
+                "auth_user_obj": userobj,
             }
 
             # see if we have any data that we are trying to save
@@ -264,8 +264,8 @@ class RelationController(BaseController):
         context = {
             "model": model,
             "session": model.Session,
-            "user": c.user or c.author,
-            "auth_user_obj": c.userobj,
+            "user": user or author,
+            "auth_user_obj": userobj,
         }
         try:
             pkg_dict = get_action("package_show")(context, {"id": id})
@@ -367,9 +367,9 @@ class RelationController(BaseController):
             c.pkg_dict = get_action("package_show")({
                 "model": model,
                 "session": model.Session,
-                "user": c.user or c.author,
+                "user": user or author,
                 "for_view": True,
-                "auth_user_obj": c.userobj,
+                "auth_user_obj": userobj,
                 "use_cache": False,
             }, {"id": id})
            # c.pkg = context["package"]
@@ -384,15 +384,15 @@ class RelationController(BaseController):
         context = {
             "model": model,
             "session": model.Session,
-            "user": c.user or c.author,
+            "user": user or author,
             "for_view": True,
-            "auth_user_obj": c.userobj,
+            "auth_user_obj": userobj,
             "use_cache": False,
         }
         data_dict = {"id": id}
         try:
             c.pkg_dict = get_action("package_show")(context, data_dict)
-            dataset_type = c.pkg_dict["type"] or "dataset"
+            dataset_type = pkg_dict["type"] or "dataset"
         except NotFound:
             abort(404, _("Dataset not found"))
         except NotAuthorized:
