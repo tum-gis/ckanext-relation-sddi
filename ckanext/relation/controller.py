@@ -1,5 +1,5 @@
 import logging
-import ckan.plugins as p
+import ckan.plugins as plugins
 from ckan.lib.base import BaseController
 import ckan.lib.helpers as h
 from ckan.common import OrderedDict, _, json, request, c, g, response, config
