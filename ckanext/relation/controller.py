@@ -16,9 +16,10 @@ import ckan.lib.navl.dictization_functions as dict_fns
 
 log = logging.getLogger(__name__)
 
-render = base.render
-abort = base.abort
+#render = base.render
+#abort = base.abort
 #redirect = base.redirect
+
 redirect = h.redirect_to
 NotFound = logic.NotFound
 NotAuthorized = logic.NotAuthorized
