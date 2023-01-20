@@ -2,7 +2,7 @@ import logging
 import ckan.plugins as plugins
 from ckan.lib.base import BaseController
 import ckan.lib.helpers as h
-from ckan.common import OrderedDict, _, json, request, c, g, response, config
+from ckan.common import OrderedDict, _, json, request, common, g, response, config
 from urllib.parse import urlencode
 import cgi
 from paste.deploy.converters import asbool
