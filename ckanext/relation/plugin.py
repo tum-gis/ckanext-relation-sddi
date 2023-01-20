@@ -1,7 +1,7 @@
 import os
 import sys
 import ckan as ckan
-import ckan.plugins as plugins
+import ckan.plugins as p
 from ckan.common import config, request
 import ckan.model as model
 import logging
