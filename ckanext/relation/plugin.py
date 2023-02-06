@@ -1,10 +1,8 @@
 import os
 import sys
 import ckan as ckan
-from flask import Blueprint
 import ckan.plugins as p
 from ckan.common import config, request
-from ckan.plugins.toolkit import get_action, request, h
 import ckan.model as model
 import logging
 from ckan.lib.plugins import DefaultTranslation
@@ -222,7 +220,7 @@ class RelationPlugin(p.SingletonPlugin):
     p.implements(p.ITranslation)                                
     p.implements(p.IConfigurable)
     p.implements(p.ITemplateHelpers)
-    p.implements(p.IBlueprint)
+    p.implements(p.IBlueprint, inherit=True)
 
     package_link = "/dataset/"
 
