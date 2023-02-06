@@ -1,9 +1,11 @@
 import logging
 import ckan.plugins as p
-from ckan.lib.base import BaseController
+
+from flask import Blueprint
 import ckan.lib.helpers as h
-from ckan.common import OrderedDict, _, json, request, common, c, g, response, config
+from ckan.common import OrderedDict, _, json, request, common, g, response, config
 from urllib.parse import urlencode
+from ckan.plugins.toolkit import get_action, request, h
 import cgi
 from paste.deploy.converters import asbool
 import ckan.logic as logic
@@ -13,6 +15,7 @@ import ckan.lib.plugins
 import ckan.lib.render
 import ckan.lib.navl.dictization_functions as dict_fns
 
+datastore = Blueprint(u'datastore', __name__)
 
 log = logging.getLogger(__name__)
 
@@ -32,33 +35,31 @@ parse_params = logic.parse_params
 flatten_to_string_key = logic.flatten_to_string_key
 lookup_package_plugin = ckan.lib.plugins.lookup_package_plugin
 
-
-class RelationController(BaseController):
-    def _resource_form(self, package_type):
-        # backwards compatibility with plugins not inheriting from
-        # DefaultDatasetPlugin and not implmenting resource_form
-        plugin = lookup_package_plugin(package_type)
-        if hasattr(plugin, "resource_form"):
-            result = plugin.resource_form()
-            if result is not None:
-                return result
+def _resource_form(self, package_type):
+# backwards compatibility with plugins not inheriting from
+# DefaultDatasetPlugin and not implmenting resource_form
+    plugin = lookup_package_plugin(package_type)
+    if hasattr(plugin, "resource_form"):
+    result = plugin.resource_form()
+    if result is not None:
+        return result
         return lookup_package_plugin().resource_form()
 
-    def finalrel(self, id, data=None, errors=None):
-        if request.method == "POST":
-            pass
+def finalrel(self, id, data=None, errors=None):
+    if request.method == "POST":
+        pass
         link = str("/dataset/relationship/edit/" + id)
         return render("package/new_data_relation.html", extra_vars={"package_id": id})
 
-    def new_relation(self, id):
-        link = str("/dataset/relationship/edit/" + id)
+def new_relation(self, id):
+    link = str("/dataset/relationship/edit/" + id)
         if request.method == "POST":
             save_action = request.params.get("save")
             print("new data dictionary !!!!!!!!!!!!!!!!")
             context = {
                 "model": model,
                 "session": model.Session,
-                "user": c.user or author,
+                "user": g.user or author,
                 "auth_user_obj": userobj,
             }
 
@@ -119,7 +120,7 @@ class RelationController(BaseController):
     def new_resource_ext(self, id, data=None, errors=None, error_summary=None):
         """ FIXME: This is a temporary action to allow styling of the
         forms. """
-        c.linkResource = str("/dataset/new_resource/" + id)
+        g.linkResource = str("/dataset/new_resource/" + id)
 
         if request.method == "POST" and not data:
             save_action = request.params.get("save")
@@ -364,7 +365,7 @@ class RelationController(BaseController):
                 "auth_user_obj": c.userobj,
                 "use_cache": False,
             }"""
-            c.pkg_dict = get_action("package_show")({
+            g.pkg_dict = get_action("package_show")({
                 "model": model,
                 "session": model.Session,
                 "user": user or author,
@@ -391,7 +392,7 @@ class RelationController(BaseController):
         }
         data_dict = {"id": id}
         try:
-            c.pkg_dict = get_action("package_show")(context, data_dict)
+            g.pkg_dict = get_action("package_show")(context, data_dict)
             dataset_type = pkg_dict["type"] or "dataset"
         except NotFound:
             abort(404, _("Dataset not found"))
