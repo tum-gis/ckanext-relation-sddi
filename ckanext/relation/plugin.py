@@ -1,6 +1,7 @@
 import os
 import sys
 import ckan as ckan
+from flask import Blueprint
 import ckan.plugins as p
 from ckan.common import config, request
 from ckan.plugins.toolkit import get_action, request, h
