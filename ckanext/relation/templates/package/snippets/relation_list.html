@@ -1,13 +1,17 @@
 {% extends "package/read_base.html" %}
 
-{% resource 'relation/group_label.css' %}
+{% set type = 'asset' if h.ckan_version().split('.')|map('int')|list >= [2, 9, 0] else 'resource' %}
+{% include 'snippets/relation_css_' ~ type ~ '.html' %}
 
 {% block header %}
 {{ super() }}
 <script src="https://code.jquery.com/jquery-2.0.3.min.js"></script>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-{% resource 'relation/style.css' %}
+
 <script src="//cdnjs.cloudflare.com/ajax/libs/cytoscape/2.5.4/cytoscape.min.js"></script>
+
+{# {% set type = 'asset' if h.ckan_version().split('.')|map('int')|list >= [2, 9, 0] else 'resource' %}
+{% include 'snippets/relation_js_' ~ type ~ '.html' %} #}
 
 <script src="https://cdn.rawgit.com/cpettitt/dagre/v0.7.4/dist/dagre.min.js"></script>
 <script src="https://cdn.rawgit.com/cytoscape/cytoscape.js-dagre/1.1.2/cytoscape-dagre.js"></script>
@@ -16,8 +20,8 @@
 
 
 {% block primary_content_inner %}
-{% set pkg = c.pkg_dict %}
 
+{% set pkg = c.pkg_dict or pkg_dict %}
 {% set graph_nodes = {} %}
 
 <h1>
