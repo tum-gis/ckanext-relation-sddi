@@ -39,7 +39,7 @@ def rel_id_list(rel_list):
 def package_all(q):
     """Return a list of all datasets searched for with value 'q'."""
 
-    query = (q.dict_of_lists())["q"][0]
+    query = q.get('q')
     datasets = tk.get_action("package_search")(
         {}, data_dict={"q": query, "include_private": True}
     )

@@ -60,7 +60,9 @@
       {% set org = depcy.organization %}
 	  	  <div class="col-md-2">{% snippet 'package/snippets/marker.html', package=depcy %}</div>
           <div class="col-md-10 column">
-          {{ h.dataset_link(depcy) }} <a href="{{  h.url_for(org.type + '_read', id=org.name, )}}">[{{ org.title }}] </a>
+          {% if org %}
+            {{ h.dataset_link(depcy) }} <a href="{{  h.url_for(org.type + '_read', id=org.name, )}}">[{{ org.title }}] </a>
+          {% endif %}
           </div>
       {% endif %}</div>
       {% with package=depcy %}
@@ -142,7 +144,9 @@
       {% set org = dep.organization %}
 	  	  <div class="col-md-2">{% snippet 'package/snippets/marker.html', package=dep %}</div>
           <div class="col-md-10 column">
+          {% if org %}
           {{ h.dataset_link(dep) }} <a href="{{  h.url_for(org.type + '_read', id=org.name, )}}">[{{ org.title }}] </a>
+          {% endif %}
           </div>
       {% endif %}</div>
       {% with package=dep %}

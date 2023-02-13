@@ -1,5 +1,6 @@
 {% ckan_extends %}
-{# {% set pkg = c.pkg %} #}
+
+{% set pkg = c.pkg %}
 {% block content_primary_nav %}
   {{ super() }}
   {{ h.build_nav_icon('relation.edit_relation', _('Edit Relationship'), id=pkg.name) }}

@@ -83,11 +83,12 @@
 	{% for depcy in h.package_all(request.params) %}
         {% set org = depcy.organization %}
 		{#% if depcy.id != pkg.id %#}
+        {% if org %}
           <tr>
             <td class="dataset-details"> {{ h.dataset_link(depcy) }} </td>
             <td> <a href="{{  h.url_for(org.type + '_read', id=org.name, )}}">{{ org.title }}</a> </td>
           </tr>
-		  {#% endif %#}
+		    {% endif %}
         {% endfor %}
       </tbody>
     </table>
@@ -102,17 +103,17 @@
  <h2>{{ _('References to other resources') }}</h2>
  <section>
     {% block rel_dependency_edit %}
-        {% snippet 'package/snippets/edit_form.html', form_id='dataset-search-dep', target='dep', field_search ='field-giant-search1', ref_id = 'ref_id1', query_rel=h.rel_get_dependency_package(pkg.id), type='depends_on', query=c.q, sorting=sorting, sorting_selected=c.sort_by_selected, count=c.page.item_count,  facets=facets, error=c.query_error, fields=c.fields, title=_('This resource is dependent on the following resources:') %}
+        {% snippet 'package/snippets/edit_form.html', form_id='dataset-search-dep', target='dep', field_search ='field-giant-search1', ref_id = 'ref_id1', query_rel=h.rel_get_dependency_package(pkg.id), type='depends_on', query=c.q, sorting=sorting, sorting_selected=c.sort_by_selected,  facets=facets, error=c.query_error, fields=c.fields, title=_('This resource is dependent on the following resources:') %}
 	{% endblock %}
  </section>
   <section>
     {% block rel_parent_edit%}
-        {% snippet 'package/snippets/edit_form.html', form_id='dataset-search-par', target='par',field_search ='field-giant-search2', ref_id = 'ref_id2', query_rel=h.rel_get_parent_package(pkg.id), type='child_of', query=c.q, sorting=sorting, sorting_selected=c.sort_by_selected, count=c.page.item_count, placeholder=_('Search resources') + '...', facets=facets, error=c.query_error, fields=c.fields, title=_('This resource is part of the following resources:') %}
+        {% snippet 'package/snippets/edit_form.html', form_id='dataset-search-par', target='par',field_search ='field-giant-search2', ref_id = 'ref_id2', query_rel=h.rel_get_parent_package(pkg.id), type='child_of', query=c.q, sorting=sorting, sorting_selected=c.sort_by_selected, placeholder=_('Search resources') + '...', facets=facets, error=c.query_error, fields=c.fields, title=_('This resource is part of the following resources:') %}
 	{% endblock %}
  </section>
   <section>
     {% block rel_linked_edit %}
-        {% snippet 'package/snippets/edit_form.html', form_id='dataset-search-lnk', target='lnk', field_search ='field-giant-search3', ref_id = 'ref_id3', query_rel=h.rel_get_linked_package(pkg.id), type='links_to', query=c.q, sorting=sorting, sorting_selected=c.sort_by_selected, count=c.page.item_count, placeholder=_('Search resources') + '...', facets=facets, error=c.query_error, fields=c.fields, title=_('This resource refers to the following resources:')	%}
+        {% snippet 'package/snippets/edit_form.html', form_id='dataset-search-lnk', target='lnk', field_search ='field-giant-search3', ref_id = 'ref_id3', query_rel=h.rel_get_linked_package(pkg.id), type='links_to', query=c.q, sorting=sorting, sorting_selected=c.sort_by_selected, placeholder=_('Search resources') + '...', facets=facets, error=c.query_error, fields=c.fields, title=_('This resource refers to the following resources:')	%}
 	{% endblock %}
  </section>
   </section>

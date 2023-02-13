@@ -2,7 +2,8 @@
 
 {% set data = data or {} %}
 {% set errors = errors or {} %}
-{% set action = form_action %}
+{% set action = form_action  or h.url_for("relation.new_res", id=pkg_name) %}
+{# {% set action = form_action  or h.url_for(c.linkResource) %} #}
 
 <form id="resource-edit" class="dataset-form dataset-resource-form form-horizontal" method="post" action="{{ action }}" data-module="basic-form resource-form" enctype="multipart/form-data">
   {% block stages %}

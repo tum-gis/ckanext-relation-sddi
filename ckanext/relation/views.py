@@ -55,10 +55,13 @@ def relations(id):
 
 
 def new_relation(id):
-    tk.c.link = url = str("/dataset/relationship/edit/" + id)
-    breakpoint()
+    tk.c.link = str("/dataset/relationship/edit/" + id)
+
     if tk.request.method == "POST":
-        save_action = tk.request.params.get("save")
+        data = clean_dict(
+                dict_fns.unflatten(tuplize_dict(parse_params(tk.request.form)))
+            )
+        save_action = data.get("save")
         print("new data dictionary !!!!!!!!!!!!!!!!")
         context = {
             "model": model,
@@ -70,7 +73,7 @@ def new_relation(id):
         # Remove button in the edit page
         removed_rel = None
         type_rem = None
-        for param in tk.request.POST:
+        for param in data:
             if param.startswith("relation_remove"):
                 removed_rel = param.split(".")[-1]
                 type_rem = param.split(".")[-2]
@@ -88,12 +91,12 @@ def new_relation(id):
                 tk.abort(
                     401, tk._("Unauthorized to create a relationship for this package")
                 )
-            return h.redirect_to(url)
+            return h.redirect_to("/dataset/relationship/edit/" + id)
 
         # add button in the edit page
         add_rel = None
         type_add = None
-        for param in tk.request.POST:
+        for param in data:
             if param.startswith("relation_add"):
                 add_rel = param.split(".")[-1]
                 type_add = param.split(".")[-2]
@@ -113,13 +116,13 @@ def new_relation(id):
             # 	print('it is done')
             # except NotAuthorized:
             #    abort(401, _('Unauthorized to create a relationship for this package'))
-            return h.redirect_to(url)
+            return h.redirect_to("/dataset/relationship/edit/" + id)
 
         if save_action == "go-metadata":
             # XXX race condition if another user edits/deletes
             h.redirect_to('package.read', id=id)
 
-    return h.redirect_to(url)
+    return h.redirect_to("/dataset/relationship/edit/" + id)
 
 
 def _resource_form(package_type):
@@ -134,18 +137,17 @@ def _resource_form(package_type):
 
 
 class CreateResource(MethodView):
+
     def post(self, id, data=None, errors=None, error_summary=None):
             """ FIXME: This is a temporary action to allow styling of the
             forms. """
-            tk.c.linkResource = str("/dataset/new_resource/" + id)
-            breakpoint()
-            save_action = tk.request.params.get("save")
             # if save_action == 'go-datadict':
             # redirect(h.url_for(controller='package', action='addDictionary'))
             data = data or clean_dict(
                 dict_fns.unflatten(tuplize_dict(parse_params(tk.request.form)))
             )
             # we don't want to include save as it is part of the form
+            save_action = data.get('save')
             del data["save"]
             # if 'id' in data.keys()and save_action=="go-dataset-final":
             # print("Id found","and the path is: ",request.path)
@@ -201,16 +203,16 @@ class CreateResource(MethodView):
                 try:
                     data_dict = tk.get_action("package_show")(context, {"id": id})
                 except NotAuthorized:
-                    tk.abort(401, _("Unauthorized to update dataset"))
+                    tk.abort(401, tk._("Unauthorized to update dataset"))
                 except NotFound:
-                    tk.abort(404, _("The dataset {id} could not be found.").format(id=id))
+                    tk.abort(404, tk._("The dataset {id} could not be found.").format(id=id))
 
                 require_resources = tk.asbool(
                     tk.config.get("ckan.dataset.create_on_ui_requires_resources", "True")
                 )
                 if require_resources and not len(data_dict["resources"]):
                     # no data so keep on page
-                    msg = _("You must add at least one data resource")
+                    msg = tk._("You must add at least one data resource")
                     # On new templates do not use flash message
 
                     if tk.asbool(tk.config.get("ckan.legacy_templates")):
@@ -220,7 +222,7 @@ class CreateResource(MethodView):
                         )
                     else:
                         errors = {}
-                        error_summary = {_("Error"): msg}
+                        error_summary = {tk._("Error"): msg}
                         return self.get(id, data, errors, error_summary)
 
                 # XXX race condition if another user edits/deletes
@@ -253,7 +255,7 @@ class CreateResource(MethodView):
                     dict(context, allow_state_change=True),
                     dict(data_dict, state="active"),
                 )
-                h.flash_notice(_("Dataset has been deleted."))
+                h.flash_notice(tk._("Dataset has been deleted."))
                 h.redirect_to('package.read', id=id)
 
             elif save_action == "go-datadict":
@@ -266,7 +268,7 @@ class CreateResource(MethodView):
                 print(
                     "save action was go-datadict in the exntenstion NEEWWWW!!!!!!!!!!!"
                 )
-                h.redirect_to("/dataset/relationship/edit/" + id)
+                return h.redirect_to("relation.edit_relation", id=id)
             # redirect(h.url_for(controller='package', action='finaldict', id=id))
             elif save_action == "go-dataset":
                 # go to first stage of add dataset
@@ -280,13 +282,14 @@ class CreateResource(MethodView):
 
     def get(self, id, data=None, errors=None, error_summary=None):
         # get resources for sidebar
+        tk.c.linkResource = str("/dataset/new_resource/" + id)
         context = {
             "model": model,
             "session": model.Session,
             "user": tk.c.user,
             "auth_user_obj": tk.c.userobj,
         }
-        breakpoint()
+
         try:
             pkg_dict = tk.get_action("package_show")(context, {"id": id})
         except NotFound:
@@ -318,17 +321,31 @@ class CreateResource(MethodView):
         return tk.render(template, extra_vars=vars)
 
 
-def finalrel(self, id, data=None, errors=None):
+def finalrel(id, data=None, errors=None):
     if tk.request.method == "POST":
         pass
-    link = str("/dataset/relationship/edit/" + id)
-    return tk.render("package/new_data_relation.html", extra_vars={"package_id": id})
+    tk.c.link = str("/dataset/relationship/edit/" + id)
+    try:
+        pkg_dict = tk.get_action("package_show")({
+            "model": model,
+            "session": model.Session,
+            "user": tk.c.user,
+            "for_view": True,
+            "auth_user_obj": tk.c.userobj,
+            "use_cache": False,
+        }, {"id": id})
+        tk.c.pkg_dict = tk.c.pkg = pkg_dict
+    except NotFound:
+        tk.abort(404, tk._("Dataset not found"))
+    except NotAuthorized:
+        tk.abort(401, tk._("Unauthorized to read dataset %s") % id)
+    return tk.render("package/new_data_relation.html", extra_vars={"package_id": id, "pkg_dict": pkg_dict})
 
 
 def edit_relation(id, data=None, errors=None):
-    breakpoint()
+
     try:
-        link = str("/dataset/relationship/new_relationship/" + id)
+        tk.c.link = str("/dataset/relationship/new_relationship/" + id)
         """context = {
             "model": model,
             "session": model.Session,
@@ -351,12 +368,12 @@ def edit_relation(id, data=None, errors=None):
     except NotAuthorized:
         tk.abort(401, tk._("Unauthorized to read dataset %s") % id)
 
-    return tk.render("package/edit_data_relation.html", extra_vars={"package_id": id})
+    return tk.render("package/edit_data_relation.html", extra_vars={"package_id": id, "pkg_dict": pkg_dict})
 
 
 relation.add_url_rule("/dataset/relationship/<id>", view_func=relations),
 relation.add_url_rule("/dataset/relationship/new_relationship/<id>", view_func=new_relation, methods=("GET", "POST")),
-relation.add_url_rule("/dataset/new_resource/<id>", view_func=CreateResource.as_view(str(u'new_res'))),
+relation.add_url_rule("/dataset/<id>/resource/new", view_func=CreateResource.as_view(str(u'new_res'))),
 relation.add_url_rule("/dataset/relationship/add/<id>", view_func=finalrel, methods=("GET", "POST")),
 relation.add_url_rule("/dataset/relationship/edit/<id>", view_func=edit_relation, methods=("GET", "POST")),
 

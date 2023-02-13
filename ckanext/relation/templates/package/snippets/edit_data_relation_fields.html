@@ -20,14 +20,14 @@ btn-primary {
 <div class="form-actions">
     {% block cancel_button %}
    <!--     <button class="btn" name="save" value="go-dataset" type="submit">{{ _('Cancel') }}</button>-->
-	 {% link_for _('Cancel'), controller='package', action='read', id=pkg_name, class_='btn btn-danger' %}
+	 {% link_for _('Cancel'), controller='dataset', action='read', id=pkg_name, class_='btn btn-danger' %}
 
       {% endblock %}
 	  
  {% block save_button %}
         
 		<!--<button style="background-color: #206b82" class="btn btn-primary" name="save" value="go-metadata" type="submit">{% block save_button_text %}{{ _('Update Relationship') }}{% endblock %}</button>-->
-		{% link_for _('Update Relationship'), controller='package', action='read', id='relationship/'+ pkg_name, class_='btn btn-primary' %}
+		{% link_for _('Update Relationship'), controller='dataset', action='read', id='relationship/'+ pkg_name, class_='btn btn-primary' %}
 		
       {% endblock %}
 </div>
