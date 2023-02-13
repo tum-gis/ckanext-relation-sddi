@@ -2,8 +2,8 @@ import logging
 import ckan.plugins as p
 from ckan.lib.base import BaseController
 import ckan.lib.helpers as h
-from ckan.common import OrderedDict, _, json, request, c, g, response, config
-from urllib import urlencode
+from ckan.common import OrderedDict, _, json, request, common, c, g, response, config
+from urllib.parse import urlencode
 import cgi
 from paste.deploy.converters import asbool
 import ckan.logic as logic
@@ -16,9 +16,10 @@ import ckan.lib.navl.dictization_functions as dict_fns
 
 log = logging.getLogger(__name__)
 
-render = base.render
-abort = base.abort
+#render = base.render
+#abort = base.abort
 #redirect = base.redirect
+
 redirect = h.redirect_to
 NotFound = logic.NotFound
 NotAuthorized = logic.NotAuthorized
@@ -46,19 +47,19 @@ class RelationController(BaseController):
     def finalrel(self, id, data=None, errors=None):
         if request.method == "POST":
             pass
-        c.link = str("/dataset/relationship/edit/" + id)
+        link = str("/dataset/relationship/edit/" + id)
         return render("package/new_data_relation.html", extra_vars={"package_id": id})
 
     def new_relation(self, id):
-        c.link = str("/dataset/relationship/edit/" + id)
+        link = str("/dataset/relationship/edit/" + id)
         if request.method == "POST":
             save_action = request.params.get("save")
             print("new data dictionary !!!!!!!!!!!!!!!!")
             context = {
                 "model": model,
                 "session": model.Session,
-                "user": c.user or c.author,
-                "auth_user_obj": c.userobj,
+                "user": c.user or author,
+                "auth_user_obj": userobj,
             }
 
             # Remove button in the edit page
@@ -111,7 +112,7 @@ class RelationController(BaseController):
 
             if save_action == "go-metadata":
                 # XXX race condition if another user edits/deletes
-                h.redirect_to(controller="package", action="read", id=id)
+                h.redirect_to('package.read', id=id)
 
         redirect("/dataset/relationship/edit/" + id)
 
@@ -145,13 +146,13 @@ class RelationController(BaseController):
             context = {
                 "model": model,
                 "session": model.Session,
-                "user": c.user or c.author,
-                "auth_user_obj": c.userobj,
+                "user": user or author,
+                "auth_user_obj": userobj,
             }
 
             # see if we have any data that we are trying to save
             data_provided = False
-            for key, value in data.iteritems():
+            for key, value in data.items():
                 if (
                     value or isinstance(value, cgi.FieldStorage)
                 ) and key != "resource_type":
@@ -178,7 +179,7 @@ class RelationController(BaseController):
 
                 if save_action == "go-dataset":
                     # go to final stage of adddataset
-                    redirect(h.url_for(controller="package", action="edit", id=id))
+                    redirect(h.url_for('package.edit', id=id))
                 # see if we have added any resources
                 try:
                     data_dict = get_action("package_show")(context, {"id": id})
@@ -211,7 +212,7 @@ class RelationController(BaseController):
                     dict(context, allow_state_change=True),
                     dict(data_dict, state="active"),
                 )
-                redirect(h.url_for(controller="package", action="read", id=id))
+                redirect(h.url_for('package.read', id=id))
 
             data["package_id"] = id
             try:
@@ -220,7 +221,7 @@ class RelationController(BaseController):
                     get_action("resource_update")(context, data)
                 else:
                     get_action("resource_create")(context, data)
-            except ValidationError, e:
+            except ValidationError as e:
                 errors = e.error_dict
                 error_summary = e.error_summary
                 return self.new_resource_ext(id, data, errors, error_summary)
@@ -236,7 +237,7 @@ class RelationController(BaseController):
                     dict(data_dict, state="active"),
                 )
                 h.flash_notice(_("Dataset has been deleted."))
-                h.redirect_to(controller="package", action="read", id=id)
+                h.redirect_to('package.read', id=id)
 
             elif save_action == "go-datadict":
                 data_dict = get_action("package_show")(context, {"id": id})
@@ -252,19 +253,19 @@ class RelationController(BaseController):
             # redirect(h.url_for(controller='package', action='finaldict', id=id))
             elif save_action == "go-dataset":
                 # go to first stage of add dataset
-                h.redirect_to(controller="package", action="edit", id=id)
+                h.redirect_to('package.edit', id=id)
             elif save_action == "go-dataset-complete":
                 # go to first stage of add dataset
-                h.redirect_to(controller="package", action="read", id=id)
+                h.redirect_to('package.edit', id=id)
             else:
                 # add more resources
-                h.redirect_to(controller="package", action="new_resource", id=id)
+                h.redirect_to('package.new_resource', id=id)
         # get resources for sidebar
         context = {
             "model": model,
             "session": model.Session,
-            "user": c.user or c.author,
-            "auth_user_obj": c.userobj,
+            "user": user or author,
+            "auth_user_obj": userobj,
         }
         try:
             pkg_dict = get_action("package_show")(context, {"id": id})
@@ -298,7 +299,7 @@ class RelationController(BaseController):
 
     """ def delete_ext(self, id):
 
-        # c.linkResource = str("/dataset/edit/" + id)
+        # linkResource = str("/dataset/edit/" + id)
         print("here is delete ext")
 
         if "cancel" in request.params:
@@ -354,7 +355,7 @@ class RelationController(BaseController):
     def edit_relation(self, id, data=None, errors=None):
 
         try:
-            c.link = str("/dataset/relationship/new_relationship/" + id)
+            link = str("/dataset/relationship/new_relationship/" + id)
             """context = {
                 "model": model,
                 "session": model.Session,
@@ -366,9 +367,9 @@ class RelationController(BaseController):
             c.pkg_dict = get_action("package_show")({
                 "model": model,
                 "session": model.Session,
-                "user": c.user or c.author,
+                "user": user or author,
                 "for_view": True,
-                "auth_user_obj": c.userobj,
+                "auth_user_obj": userobj,
                 "use_cache": False,
             }, {"id": id})
            # c.pkg = context["package"]
@@ -383,15 +384,15 @@ class RelationController(BaseController):
         context = {
             "model": model,
             "session": model.Session,
-            "user": c.user or c.author,
+            "user": user or author,
             "for_view": True,
-            "auth_user_obj": c.userobj,
+            "auth_user_obj": userobj,
             "use_cache": False,
         }
         data_dict = {"id": id}
         try:
             c.pkg_dict = get_action("package_show")(context, data_dict)
-            dataset_type = c.pkg_dict["type"] or "dataset"
+            dataset_type = pkg_dict["type"] or "dataset"
         except NotFound:
             abort(404, _("Dataset not found"))
         except NotAuthorized:

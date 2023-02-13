@@ -78,11 +78,13 @@
         {% set org1 = depcy1.organization %}
 		{#% if pkg.private and pkg.organization == org1 %#}
 		      {% if depcy1.id not in h.rel_id_list(query_rel) %}
+          {% if org1 %}
           <tr>
             <td class="dataset-details"> {{ h.dataset_link(depcy1) }} </td>
             <td> <a href="{{  h.url_for(org1.type + '_read', id=org1.name, )}}">{{ org1.title }}</a> </td>
             <td><input name="relation_add.{{ type }}.{{ depcy1.id }}" value="{{ _('Add') }}" type="submit" class="btn btn-success btn-sm media-edit" title="{{ _('Add relationship to this resource') }}"/></td>
           </tr>
+          {% endif %}
 {% endif %}		  
 {#% endif %#}
 {% endif %}
