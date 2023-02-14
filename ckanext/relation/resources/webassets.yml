@@ -1,5 +1,5 @@
 main_css:
-  filters: cssrewrite
+#  filters: cssrewrite
   contents:
     - css/group_label.css
     - css/style.css
