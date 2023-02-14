@@ -22,12 +22,12 @@ NotAuthorized = tk.NotAuthorized
 ValidationError = tk.ValidationError
 
 
-class RelationAdd(MethodView):
-    def get(self):
-        pass
+# class RelationAdd(MethodView):
+#    def get(self):
+#        pass
 
-    def post(self):
-        pass
+#    def post(self):
+#        pass
 
 
 def relations(id):
