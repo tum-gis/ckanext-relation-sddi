@@ -120,7 +120,7 @@ def new_relation(id):
 
         if save_action == "go-metadata":
             # XXX race condition if another user edits/deletes
-            h.redirect_to('package.read', id=id)
+            return h.redirect_to('dataset.read', id=id)
 
     return h.redirect_to("/dataset/relationship/edit/" + id)
 
@@ -194,11 +194,11 @@ class CreateResource(MethodView):
                     print(
                         "save action was go-datadict in the exntenstion NEEWWWW!!!!!!!!!!!"
                     )
-                    h.redirect_to("/dataset/relationship/edit/" + id)
+                    return h.redirect_to("/dataset/relationship/edit/" + id)
 
                 if save_action == "go-dataset":
                     # go to final stage of adddataset
-                    h.redirect_to(h.url_for('package.edit', id=id))
+                    return h.redirect_to(h.url_for('dataset.edit', id=id))
                 # see if we have added any resources
                 try:
                     data_dict = tk.get_action("package_show")(context, {"id": id})
@@ -217,9 +217,7 @@ class CreateResource(MethodView):
 
                     if tk.asbool(tk.config.get("ckan.legacy_templates")):
                         h.flash_error(msg)
-                        h.redirect_to(
-                            controller="package", action="new_resource", id=id
-                        )
+                        return h.redirect_to('dataset.new', id=id)
                     else:
                         errors = {}
                         error_summary = {tk._("Error"): msg}
@@ -231,7 +229,7 @@ class CreateResource(MethodView):
                     dict(context, allow_state_change=True),
                     dict(data_dict, state="active"),
                 )
-                h.redirect_to(h.url_for('package.read', id=id))
+                return h.redirect_to(h.url_for('dataset.read', id=id))
 
             data["package_id"] = id
             try:
@@ -248,6 +246,7 @@ class CreateResource(MethodView):
                 tk.abort(401, tk._("Unauthorized to create a resource"))
             except NotFound:
                 tk.abort(404, tk._("The dataset {id} could not be found.").format(id=id))
+
             if save_action == "go-metadata":
                 # XXX race condition if another user edits/deletes
                 data_dict = tk.get_action("package_show")(context, {"id": id})
@@ -255,8 +254,7 @@ class CreateResource(MethodView):
                     dict(context, allow_state_change=True),
                     dict(data_dict, state="active"),
                 )
-                h.flash_notice(tk._("Dataset has been deleted."))
-                h.redirect_to('package.read', id=id)
+                return h.redirect_to('dataset.read', id=id)
 
             elif save_action == "go-datadict":
                 data_dict = tk.get_action("package_show")(context, {"id": id})
@@ -272,13 +270,13 @@ class CreateResource(MethodView):
             # redirect(h.url_for(controller='package', action='finaldict', id=id))
             elif save_action == "go-dataset":
                 # go to first stage of add dataset
-                h.redirect_to('package.edit', id=id)
+                return h.redirect_to('dataset.edit', id=id)
             elif save_action == "go-dataset-complete":
                 # go to first stage of add dataset
-                h.redirect_to('package.edit', id=id)
+                return h.redirect_to('dataset.edit', id=id)
             else:
                 # add more resources
-                h.redirect_to('package.new_resource', id=id)
+                return h.redirect_to('dataset.new', id=id)
 
     def get(self, id, data=None, errors=None, error_summary=None):
         # get resources for sidebar
