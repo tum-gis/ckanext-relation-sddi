@@ -39,7 +39,8 @@
     {% else%}
     <li class="marker free">
     {% endif %}
-    <a href="{{ app_globals.site_url }}/group/{{ main.name }}">{{ main.title }}</a></li>
+    {#<a href="{{ app_globals.site_url }}/group/{{ main.name }}">{{ main.title }}</a></li> #}
+    <a href="{{ h.url_for('group.read', id=main.name) }}">{{ main.title }}</a></li>
 {% endfor %}
 
 </ul>
