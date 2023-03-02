@@ -146,6 +146,9 @@ class CreateResource(MethodView):
             data = data or clean_dict(
                 dict_fns.unflatten(tuplize_dict(parse_params(tk.request.form)))
             )
+            data.update(clean_dict(
+                dict_fns.unflatten(tuplize_dict(parse_params(tk.request.files)))
+            ))
             # we don't want to include save as it is part of the form
             save_action = data.get('save')
             del data["save"]
