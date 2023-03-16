@@ -19,7 +19,7 @@
   {{ super() }}
 
 	{% if h.has_relationship(pkg.id) %}
-	{% set url = app_globals.site_url + "/dataset/relationship/" + pkg.name %}	
+	{% set url = h.url_for("relation.relations", id=pkg.name) %}
 	<div class="alert alert-success" role="alert" style="padding: 10px">
 	<div class="row">
 	<div class="col-md-1"> <i class= "fa fa-link fa-spin" style="margin-left: 8px; margin-top: 5px; font-size:35px; color:black;"></i>

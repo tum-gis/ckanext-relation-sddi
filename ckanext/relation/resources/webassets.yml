@@ -1,0 +1,9 @@
+main_css:
+#  filters: cssrewrite
+  contents:
+    - css/group_label.css
+    - css/style.css
+
+main_js:
+  contents:
+    - js/cytoscape.min.js
