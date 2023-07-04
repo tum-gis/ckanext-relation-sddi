@@ -32,69 +32,82 @@
   background: #2980b9;
 }
 
-
-.dataset-markers .marker.zero {
-  background: #27ae60;
-}
-
-.dataset-markers .marker.zero:after {
-  border-right-color: #1e8449;
-}
-
-.dataset-markers .marker.one {
-  background: #2980b9;
-}
-
-.dataset-markers .marker.one:after {
+.dataset-markers .marker.main-g:after {
   border-right-color: #2472a4;
 }
 
-.dataset-markers .marker.two {
-  background: #2c3e50;
-}
-
-.dataset-markers .marker.two:after {
-  border-right-color: #233140;
-}
-
-.dataset-markers .marker.three {
-  background: #e67e22;
-}
-
-.dataset-markers .marker.three:after {
-  border-right-color: #bf6515;
-}
-
-.dataset-markers .marker.four {
+.dataset-markers .marker.theme {
   background: #9b59b6;
 }
 
-.dataset-markers .marker.four:after {
+.dataset-markers .marker.theme:after {
   border-right-color: #8e44ad;
 }
 
+
+
+.dataset-markers .marker.zero {
+  background: #e3731e;
+}
+
+.dataset-markers .marker.zero:after {
+  border-right-color: #bf5d13;
+}
+
+.dataset-markers .marker.one {
+  background: #346ce3;
+}
+
+.dataset-markers .marker.one:after {
+  border-right-color: #2b5abd;
+}
+
+.dataset-markers .marker.two {
+  background: #008a0b;
+}
+
+.dataset-markers .marker.two:after {
+  border-right-color: #016b0a;
+}
+
+.dataset-markers .marker.three {
+  background: #a6a6a6;
+}
+
+.dataset-markers .marker.three:after {
+  border-right-color: #8a8a8a;
+}
+
+.dataset-markers .marker.four {
+  background: #d13838;
+}
+
+.dataset-markers .marker.four:after {
+  border-right-color: #b03535;
+}
+
 .dataset-markers .marker.five {
-  background: #1abc9c;
+  background: #5fc4e3;
 }
 
 .dataset-markers .marker.five:after {
-  border-right-color: #17a689;
+  border-right-color: #4ea5bf;
 }
 
 .dataset-markers .marker.six {
-  background: #f1c40f;
+  background: #d10000;
 }
 
 .dataset-markers .marker.six:after {
-  border-right-color: #dab10d;
+  border-right-color: #960202;
 }
 
 .dataset-markers .marker.seven {
-  background: #b1455a;
+  background: #e36b99;
 }
 
 .dataset-markers .marker.seven:after {
-  border-right-color: #8f3748;
+  border-right-color: #ba4974;
 }
 
 .dataset-markers .marker.eight {
