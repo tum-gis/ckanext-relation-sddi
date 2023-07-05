@@ -1,78 +1,23 @@
 ckanext-relation
 =====================
 
-This CKAN extension is intended to be used in combination with the [SDDI CKAN Docker container](https://github.com/tum-gis/SDDI-CKAN-Docker).
-
-------------
 Overview
 ------------
 
 This extension provides an UI for creating, deleting and viewing relationships between datasets.
+If the extension is used with (ckanext-grouphierarchy-sddi)[https://github.com/tum-gis/ckanext-grouphierarchy-sddi] extension, the graphical representation will be in the colours of the groups defined in the (ckanext-grouphierarchy-sddi)[https://github.com/tum-gis/ckanext-grouphierarchy-sddi] extension.
 
 In this implementation which is specifically designed for the requirements of [HEF, TUM](http://www.hef.wzw.tum.de/).
 
+In the following image is one example of the implementation:
+
+![image](https://github.com/tum-gis/ckanext-relation-sddi/assets/93824048/5dcf7a0a-181c-48f2-be57-4f645be2a5a6)
 
 ------------
 Requirements
 ------------
 
-This extension is tested with CKAN 2.8.0.
-You may have problem with the deleting if you use this version. You may need to upgrade / update the delete function to purge all deleted datasets.
-Have a look at this: https://github.com/ckan/ckan/blob/ckan-2.8.0/ckan/controllers/package.py#L1024
-
-Here is the correct code:
-```
- def delete(self, id):
-
-        if 'cancel' in request.params:
-            h.redirect_to(controller='package', action='edit', id=id)
-
-        context = {'model': model, 'session': model.Session,
-                   'user': c.user, 'auth_user_obj': c.userobj}
-
-        try:
-            if request.method == 'POST':
-				# Newly added block to delete the relationship if there exists
-                # It only includes three types of relationship 
-				for rel in ['depends_on', 'links_to', 'child_of']: 
-					print('test:'+ rel)
-					rel_exist = []
-					try:
-						rel_exist = get_action('package_relationships_list')(data_dict={'id': id, 'rel':rel})
-						print('done with action')
-						print(rel_exist)
-						if len(rel_exist)!=0:
-							print(rel, 'exists')
-							for ds in rel_exist:
-								data_dict={"subject": id, "object": ds['object'], "type": rel}								
-								get_action('package_relationship_delete')({}, data_dict)
-								print('hier ist ds:')
-					except:
-						pass
-                ####### till here############
-				get_action('package_delete')(context, {'id': id})             
-				h.flash_notice(_('Dataset has been deleted.'))
-				h.redirect_to(controller='package', action='search')							
-            c.pkg_dict = get_action('package_show')(context, {'id': id})
-            dataset_type = c.pkg_dict['type'] or 'dataset'
-        except NotAuthorized:
-            abort(403, _('Unauthorized to delete package %s') % '')
-        except NotFound:
-            abort(404, _('Dataset not found'))
-        return render('package/confirm_delete.html',
-                      extra_vars={'dataset_type': dataset_type})
-```
-
-The javascript is also directly included in the main.min.js and not in this ckanext.
-Here is the Javascript code used for this extension:
-
-```
-$(document).ready(function() {
-    $(".glyphicon").click(function() {
-        $(this).toggleClass("glyphicon-chevron-down").toggleClass("glyphicon-chevron-up")
-    })
-});
-```
+This extension is tested with CKAN 2.8.0 and wih CKAN > 2.9.0.
 
 ------------
 Installation
