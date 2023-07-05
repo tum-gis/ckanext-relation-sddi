@@ -9,7 +9,7 @@ For releases `< 1.0.0` minor version steps may indicate breaking changes too.
 ### Fixed
 - small bug fixes metioned in tum-gis/ckanext-relation-sddi/issues/6 
 
-## [1.0.0] - 2023-03-16
+## [1.0.0] - 2023-07-05
 ### Changed
 Update and compatibility with the CKAN > v2.9.0
 
