@@ -5,7 +5,7 @@ Overview
 ------------
 
 This extension provides an UI for creating, deleting and viewing relationships between datasets.
-If the extension is used with (ckanext-grouphierarchy-sddi)[https://github.com/tum-gis/ckanext-grouphierarchy-sddi] extension, the graphical representation will be in the colours of the groups defined in the (ckanext-grouphierarchy-sddi)[https://github.com/tum-gis/ckanext-grouphierarchy-sddi] extension.
+If the extension is used with [ckanext-grouphierarchy-sddi](https://github.com/tum-gis/ckanext-grouphierarchy-sddi) extension, the graphical representation will be in the colours of the groups defined in the [ckanext-grouphierarchy-sddi](https://github.com/tum-gis/ckanext-grouphierarchy-sddi) extension.
 
 In this implementation which is specifically designed for the requirements of [HEF, TUM](http://www.hef.wzw.tum.de/).
 
