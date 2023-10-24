@@ -8,6 +8,8 @@ For releases `< 1.0.0` minor version steps may indicate breaking changes too.
 
 ## [1.0.3] - 2023-10-24
 ### Changed
+- cytoscape is updated from version 2.5.4 to 3.10.1
+- dagre is updated from version 0.7.4 to 0.8.5
 - jquery is updated from version 2.0.3 to 3.5.1
 
 ## [1.0.2]- 2023-07-24
