@@ -36,7 +36,7 @@
 
 
 <form {% if form_id %}id="{{ form_id }}1" {% endif %}class="search-form{% if no_bottom_border %} no-bottom-border{% endif %}" method="get" data-module="select-switch">
-    
+  {{ h.csrf_input() if 'csrf_input' in h }}
     <div >
       {% block form %}
         {% set facets = {

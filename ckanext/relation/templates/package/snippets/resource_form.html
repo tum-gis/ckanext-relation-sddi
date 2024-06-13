@@ -6,6 +6,7 @@
 {# {% set action = form_action  or h.url_for(c.linkResource) %} #}
 
 <form id="resource-edit" class="dataset-form dataset-resource-form form-horizontal" method="post" action="{{ action }}" data-module="basic-form resource-form" enctype="multipart/form-data">
+  {{ h.csrf_input() if 'csrf_input' in h }}
   {% block stages %}
     {# An empty stages variable will not show the stages #}
     {% if stage %}
