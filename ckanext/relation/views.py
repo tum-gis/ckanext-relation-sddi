@@ -34,15 +34,15 @@ def relations(id):
     context = {
         "model": model,
         "session": model.Session,
-        "user": tk.c.user,
+        "user": tk.g.user,
         "for_view": True,
-        "auth_user_obj": tk.c.userobj,
+        "auth_user_obj": tk.g.userobj,
         "use_cache": False,
     }
     data_dict = {"id": id}
 
     try:
-        tk.c.pkg_dict = pkg_dict = tk.get_action("package_show")(context, data_dict)
+        tk.g.pkg_dict = pkg_dict = tk.get_action("package_show")(context, data_dict)
         dataset_type = pkg_dict["type"] or "dataset"
     except NotFound:
         tk.abort(404, tk._("Dataset not found"))
@@ -55,7 +55,8 @@ def relations(id):
 
 
 def new_relation(id):
-    tk.c.link = str("/dataset/relationship/edit/" + id)
+    breakpoint()
+    tk.g.link = str("/dataset/relationship/edit/" + id)
 
     if tk.request.method == "POST":
         data = clean_dict(
@@ -66,8 +67,8 @@ def new_relation(id):
         context = {
             "model": model,
             "session": model.Session,
-            "user": tk.c.user,
-            "auth_user_obj": tk.c.userobj,
+            "user": tk.g.user,
+            "auth_user_obj": tk.g.userobj,
         }
 
         # Remove button in the edit page
@@ -168,8 +169,8 @@ class CreateResource(MethodView):
             context = {
                 "model": model,
                 "session": model.Session,
-                "user": tk.c.user,
-                "auth_user_obj": tk.c.userobj,
+                "user": tk.g.user,
+                "auth_user_obj": tk.g.userobj,
             }
 
             # see if we have any data that we are trying to save
@@ -211,14 +212,14 @@ class CreateResource(MethodView):
                     tk.abort(404, tk._("The dataset {id} could not be found.").format(id=id))
 
                 require_resources = tk.asbool(
-                    tk.config.get("ckan.dataset.create_on_ui_requires_resources", "True")
+                    tk.gonfig.get("ckan.dataset.create_on_ui_requires_resources", "True")
                 )
                 if require_resources and not len(data_dict["resources"]):
                     # no data so keep on page
                     msg = tk._("You must add at least one data resource")
                     # On new templates do not use flash message
 
-                    if tk.asbool(tk.config.get("ckan.legacy_templates")):
+                    if tk.asbool(tk.gonfig.get("ckan.legacy_templates")):
                         h.flash_error(msg)
                         return h.redirect_to('dataset.new', id=id)
                     else:
@@ -283,12 +284,12 @@ class CreateResource(MethodView):
 
     def get(self, id, data=None, errors=None, error_summary=None):
         # get resources for sidebar
-        tk.c.linkResource = str("/dataset/new_resource/" + id)
+        tk.g.linkResource = str("/dataset/new_resource/" + id)
         context = {
             "model": model,
             "session": model.Session,
-            "user": tk.c.user,
-            "auth_user_obj": tk.c.userobj,
+            "user": tk.g.user,
+            "auth_user_obj": tk.g.userobj,
         }
 
         try:
@@ -325,17 +326,17 @@ class CreateResource(MethodView):
 def finalrel(id, data=None, errors=None):
     if tk.request.method == "POST":
         pass
-    tk.c.link = str("/dataset/relationship/edit/" + id)
+    tk.g.link = str("/dataset/relationship/edit/" + id)
     try:
         pkg_dict = tk.get_action("package_show")({
             "model": model,
             "session": model.Session,
-            "user": tk.c.user,
+            "user": tk.g.user,
             "for_view": True,
-            "auth_user_obj": tk.c.userobj,
+            "auth_user_obj": tk.g.userobj,
             "use_cache": False,
         }, {"id": id})
-        tk.c.pkg_dict = tk.c.pkg = pkg_dict
+        tk.g.pkg_dict = tk.g.pkg = pkg_dict
     except NotFound:
         tk.abort(404, tk._("Dataset not found"))
     except NotAuthorized:
@@ -344,9 +345,8 @@ def finalrel(id, data=None, errors=None):
 
 
 def edit_relation(id, data=None, errors=None):
-
     try:
-        tk.c.link = str("/dataset/relationship/new_relationship/" + id)
+        tk.g.link = str("/dataset/relationship/new_relationship/" + id)
         """context = {
             "model": model,
             "session": model.Session,
@@ -358,12 +358,12 @@ def edit_relation(id, data=None, errors=None):
         pkg_dict = tk.get_action("package_show")({
             "model": model,
             "session": model.Session,
-            "user": tk.c.user,
+            "user": tk.g.user,
             "for_view": True,
-            "auth_user_obj": tk.c.userobj,
+            "auth_user_obj": tk.g.userobj,
             "use_cache": False,
         }, {"id": id})
-        tk.c.pkg_dict = tk.c.pkg = pkg_dict
+        tk.g.pkg_dict = tk.g.pkg = pkg_dict
     except NotFound:
         tk.abort(404, tk._("Dataset not found"))
     except NotAuthorized:
@@ -377,6 +377,7 @@ relation.add_url_rule("/dataset/relationship/new_relationship/<id>", view_func=n
 relation.add_url_rule("/dataset/<id>/resource/new", view_func=CreateResource.as_view(str(u'new_res'))),
 relation.add_url_rule("/dataset/relationship/add/<id>", view_func=finalrel, methods=("GET", "POST")),
 relation.add_url_rule("/dataset/relationship/edit/<id>", view_func=edit_relation, methods=("GET", "POST")),
+
 
 def get_blueprints():
     return [relation]
