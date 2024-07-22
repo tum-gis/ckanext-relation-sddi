@@ -53,7 +53,7 @@ class RelationController(BaseController):
     def new_relation(self, id):
         link = str("/dataset/relationship/edit/" + id)
         if request.method == "POST":
-            save_action = request.params.get("save")
+            save_action = request.args.get("save")
             print("new data dictionary !!!!!!!!!!!!!!!!")
             context = {
                 "model": model,
@@ -122,7 +122,7 @@ class RelationController(BaseController):
         c.linkResource = str("/dataset/new_resource/" + id)
 
         if request.method == "POST" and not data:
-            save_action = request.params.get("save")
+            save_action = request.args.get("save")
             # if save_action == 'go-datadict':
             # redirect(h.url_for(controller='package', action='addDictionary'))
             data = data or clean_dict(

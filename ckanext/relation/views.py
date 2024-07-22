@@ -55,7 +55,6 @@ def relations(id):
 
 
 def new_relation(id):
-    breakpoint()
     tk.g.link = str("/dataset/relationship/edit/" + id)
 
     if tk.request.method == "POST":
@@ -280,7 +279,7 @@ class CreateResource(MethodView):
                 return h.redirect_to('dataset.edit', id=id)
             else:
                 # add more resources
-                return h.redirect_to('dataset.new', id=id)
+                return h.redirect_to('resource.new', id=id)
 
     def get(self, id, data=None, errors=None, error_summary=None):
         # get resources for sidebar

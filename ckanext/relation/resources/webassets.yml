@@ -2,6 +2,7 @@ main_css:
 #  filters: cssrewrite
   contents:
     - css/style.css
+    - css/group_label.css
 
 main_js:
   contents:
