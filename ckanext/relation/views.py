@@ -211,14 +211,14 @@ class CreateResource(MethodView):
                     tk.abort(404, tk._("The dataset {id} could not be found.").format(id=id))
 
                 require_resources = tk.asbool(
-                    tk.gonfig.get("ckan.dataset.create_on_ui_requires_resources", "True")
+                    tk.config.get("ckan.dataset.create_on_ui_requires_resources", "True")
                 )
                 if require_resources and not len(data_dict["resources"]):
                     # no data so keep on page
                     msg = tk._("You must add at least one data resource")
                     # On new templates do not use flash message
 
-                    if tk.asbool(tk.gonfig.get("ckan.legacy_templates")):
+                    if tk.asbool(tk.config.get("ckan.legacy_templates")):
                         h.flash_error(msg)
                         return h.redirect_to('dataset.new', id=id)
                     else:
