@@ -17,7 +17,7 @@ In the following image is one example of the implementation:
 Requirements
 ------------
 
-This extension is tested with CKAN 2.8.0 and wih CKAN > 2.9.0.
+This extension is tested with CKAN 2.11.0.
 
 ------------
 Installation
