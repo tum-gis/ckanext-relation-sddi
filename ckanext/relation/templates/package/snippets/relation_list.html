@@ -451,7 +451,19 @@ var relations = {{ graph_nodes |tojson }};
 
     cy.layout({
       name: 'concentric',
-  });
+	  avoidOverlap: true,
+	  nodeSpacing: 50,
+	  minNodeSpacing: 30,
+	  concentric: function(node) {
+		return node.degree();
+	  },
+	   levelWidth: function(nodes) {
+		return 2;
+	},
+	padding: 30,
+	animate: true,
+	spacingFactor: 2.0
+}).run();
   
     //cy.fit(cy.elements(), 2);
     cy.maxZoom(1.3);
