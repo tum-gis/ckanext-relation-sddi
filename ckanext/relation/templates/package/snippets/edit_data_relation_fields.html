@@ -1,13 +1,16 @@
 {#
 Footer of the relationship editor.
 
+Connections are stored as soon as they are added or removed, so "Save
+relationships" finishes editing and shows the relationships of the entry.
+
 pkg_name - name of the dataset being edited.
 #}
 <div class="rel-footer">
-  <a class="rel-btn rel-btn-outline" href="{{ h.url_for('relation.relations', id=pkg_name) }}">
-    {{ _('View relationship graph') }}
+  <a class="rel-btn rel-btn-outline rel-btn-lg" href="{{ h.url_for('dataset.read', id=pkg_name) }}">
+    {{ _('Cancel') }}
   </a>
-  <a class="rel-btn rel-btn-primary" href="{{ h.url_for('dataset.read', id=pkg_name) }}">
-    {{ _('Done') }}
+  <a class="rel-btn rel-btn-primary rel-btn-lg" href="{{ h.url_for('relation.relations', id=pkg_name) }}">
+    {{ _('Save relationships') }}
   </a>
 </div>

@@ -9,12 +9,13 @@
   --rel-blue: #2a5bd7;
   --rel-blue-dark: #1e46ad;
 
-  --rel-part: #4a7c2e;
-  --rel-part-soft: #eef5ea;
-  --rel-depends: #e07b24;
-  --rel-depends-soft: #fdf1e6;
-  --rel-related: #7b3fb5;
-  --rel-related-soft: #f4edfb;
+  /* Same colours as the edges of the full relationship graph */
+  --rel-part: #2e7d32;      /* child_of: green */
+  --rel-part-soft: #e8f3e9;
+  --rel-depends: #d32f2f;   /* depends_on: red */
+  --rel-depends-soft: #fdecec;
+  --rel-related: #1f2937;   /* links_to: black */
+  --rel-related-soft: #eceef1;
 
   color: var(--rel-text);
   font-size: 15px;
@@ -47,13 +48,24 @@
 .rel-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 260px;
+  grid-template-areas:
+    "main    aside"
+    "preview legend"
+    "footer  footer";
   gap: 24px;
   align-items: start;
 }
 
+.rel-main { grid-area: main; min-width: 0; }
+.rel-aside { grid-area: aside; }
+.rel-preview { grid-area: preview; min-width: 0; }
+.rel-legend { grid-area: legend; }
+.rel-footer { grid-area: footer; }
+
 @media (max-width: 991px) {
   .rel-layout {
     grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "main" "preview" "legend" "aside" "footer";
   }
 }
 
@@ -521,15 +533,243 @@
   font-style: italic;
 }
 
+/* Relationship graph preview */
+
+.rel-preview,
+.rel-legend {
+  padding: 22px 24px;
+  border: 1px solid var(--rel-border);
+  border-radius: 10px;
+  background: var(--rel-surface);
+}
+
+.rel-preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.rel-preview-title,
+.rel-legend-title {
+  margin: 0 0 4px;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.rel-preview-desc {
+  margin: 0;
+  color: var(--rel-muted);
+  font-size: 14px;
+}
+
+.rel-preview-empty {
+  margin: 0;
+  padding: 28px 0;
+  color: var(--rel-muted);
+  font-style: italic;
+  text-align: center;
+}
+
+.rel-graph {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, auto) minmax(0, 1fr);
+  grid-template-areas:
+    "top    top    top"
+    "left   center right"
+    "bottom bottom bottom";
+  gap: 36px 44px;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.rel-graph-edges {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.rel-graph-edges marker {
+  color: var(--rel-accent);
+}
+
+.rel-graph-edges line {
+  stroke: var(--rel-accent);
+  stroke-width: 2;
+}
+
+.rel-graph-center { grid-area: center; display: flex; justify-content: center; }
+
+.rel-graph-top {
+  grid-area: top;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.rel-graph-top .rel-graph-group {
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.rel-graph-caption {
+  color: var(--rel-muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.rel-graph-left { grid-area: left; align-items: flex-end; }
+.rel-graph-right { grid-area: right; align-items: flex-start; }
+.rel-graph-bottom { grid-area: bottom; flex-direction: row !important; flex-wrap: wrap; justify-content: center; }
+
+.rel-graph-group {
+  position: relative; /* above the edges */
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rel-graph-group:empty {
+  display: none;
+}
+
+.rel-graph-node {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 100%;
+  padding: 8px 14px 8px 10px;
+  border: 1px solid #dfe3e8;
+  border-radius: 6px;
+  background: var(--rel-surface);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, .05);
+}
+
+/* Names wrap to at most two lines so they stay readable in narrow columns */
+.rel-graph-node a {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--rel-text);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.rel-graph-node a:hover {
+  color: var(--rel-blue);
+}
+
+.rel-graph-self {
+  max-width: 180px;
+  padding: 10px 16px;
+  border-color: #b9cdf3;
+  background: #eef3fc;
+}
+
+.rel-graph-self-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #dce6fa;
+  color: var(--rel-blue);
+  flex-shrink: 0;
+}
+
+.rel-graph-self small {
+  display: block;
+  color: var(--rel-muted);
+  font-size: 12px;
+}
+
+.rel-graph-self strong {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: 14px;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+@media (max-width: 600px) {
+  .rel-graph {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "top" "center" "left" "right" "bottom";
+    gap: 28px;
+    justify-items: center;
+  }
+
+  .rel-graph-left,
+  .rel-graph-right {
+    align-items: center;
+  }
+}
+
+/* Legend */
+
+.rel-legend ul {
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rel-legend li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.rel-legend-arrow {
+  width: 28px;
+  height: 10px;
+  color: var(--rel-accent);
+  flex-shrink: 0;
+}
+
+.rel-legend-label {
+  color: var(--rel-accent);
+  font-weight: 500;
+}
+
+.rel-dot-sm {
+  width: 14px;
+  height: 14px;
+  margin: 0 7px;
+}
+
 /* Footer */
 
 .rel-footer {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
-  margin-top: 24px;
-  padding-top: 16px;
-  border-top: 1px solid var(--rel-border);
+  gap: 12px;
+  padding-top: 4px;
+}
+
+.rel-btn-lg {
+  padding: 10px 28px;
+  font-size: 16px;
 }
 
 /* "About connections" help card */

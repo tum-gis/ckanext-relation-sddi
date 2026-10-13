@@ -61,6 +61,7 @@ class RelationPlugin(MixinPlugin, p.SingletonPlugin):
             "has_relationship": h.has_relationship,
             "outgoing_relationship": h.outgoing_relationship,
             "rel_marker_class": h.marker_class,
+            "rel_marker_info": h.marker_info,
             "rel_related_packages": h.related_packages,
             "rel_candidates": h.relation_candidates,
         }

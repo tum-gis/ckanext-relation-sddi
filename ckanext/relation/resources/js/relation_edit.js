@@ -230,6 +230,13 @@
       });
     });
 
+    // --- Relationship graph preview -------------------------------------------
+
+    var graph = root.querySelector('[data-rel-graph]');
+    if (graph) {
+      setupGraph(graph);
+    }
+
     // --- Highlight the section we came back to after add / remove -------------
 
     if (window.location.hash.indexOf('#rel-section-') === 0) {
@@ -237,6 +244,74 @@
       if (target) {
         target.classList.add('is-flash');
       }
+    }
+  }
+
+  /* Point where the line from the centre of rect a towards (x, y) leaves rect a. */
+  function borderPoint(a, x, y) {
+    var cx = a.x + a.w / 2;
+    var cy = a.y + a.h / 2;
+    var dx = x - cx;
+    var dy = y - cy;
+    if (!dx && !dy) { return { x: cx, y: cy }; }
+    var scale = Math.min(
+      dx ? (a.w / 2) / Math.abs(dx) : Infinity,
+      dy ? (a.h / 2) / Math.abs(dy) : Infinity
+    );
+    return { x: cx + dx * scale, y: cy + dy * scale };
+  }
+
+  function setupGraph(graph) {
+    var SVG_NS = 'http://www.w3.org/2000/svg';
+    var GAP = 6; // space between the arrow head and the node
+    var svg = graph.querySelector('.rel-graph-edges');
+    var center = graph.querySelector('[data-rel-graph-center]');
+    var nodes = graph.querySelectorAll('[data-rel-graph-node]');
+
+    function box(el, origin) {
+      var r = el.getBoundingClientRect();
+      return { x: r.left - origin.left, y: r.top - origin.top, w: r.width, h: r.height };
+    }
+
+    function draw() {
+      var origin = graph.getBoundingClientRect();
+      var from = box(center, origin);
+
+      each(svg.querySelectorAll('line'), function (line) { line.remove(); });
+
+      each(nodes, function (node) {
+        var to = box(node, origin);
+        var start = borderPoint(from, to.x + to.w / 2, to.y + to.h / 2);
+        var end = borderPoint(to, from.x + from.w / 2, from.y + from.h / 2);
+        // Incoming connections point from the other entry to this entry
+        if (node.getAttribute('data-rel-direction') === 'in') {
+          var tmp = start;
+          start = end;
+          end = tmp;
+        }
+        var len = Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2)) || 1;
+        var kind = node.getAttribute('data-rel-graph-node');
+
+        var line = document.createElementNS(SVG_NS, 'line');
+        line.setAttribute('x1', start.x);
+        line.setAttribute('y1', start.y);
+        line.setAttribute('x2', end.x - (end.x - start.x) / len * GAP);
+        line.setAttribute('y2', end.y - (end.y - start.y) / len * GAP);
+        line.setAttribute('class', 'rel-kind-' + kind);
+        line.setAttribute('marker-end', 'url(#rel-arrow-' + kind + ')');
+        svg.appendChild(line);
+      });
+    }
+
+    draw();
+    if (window.ResizeObserver) {
+      new ResizeObserver(draw).observe(graph);
+    } else {
+      window.addEventListener('resize', draw);
+    }
+    // Web fonts can change the node sizes after the first drawing
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(draw);
     }
   }
 
