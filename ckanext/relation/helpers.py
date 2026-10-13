@@ -38,6 +38,131 @@ def marker_class(pkg):
     return marker_info(pkg)["cls"]
 
 
+# Relationship rules per main category (from the OCL invariants of the SDDI model).
+#
+#   subject category -> relation type -> main categories the target may have
+#
+# A relation type that is not listed is allowed to any target. An empty set
+# means the relation type is not allowed at all for that category. When an
+# entry has several main categories, the rules of all of them apply.
+RELATION_RULES = {
+    # context Project inv ChildOfMeansSubprojectToParent
+    "project": {
+        "child_of": {"project"},
+    },
+    # context DigitalTwin inv OutgoingConstraints
+    #   DigitalTwin / Project targets: links_to or depends_on
+    #   all other targets:             depends_on only
+    "digital-twin": {
+        "child_of": set(),
+        "links_to": {"digital-twin", "project"},
+    },
+}
+
+# Exclusions per main category:
+#
+#   subject category -> relation type -> main categories the target may NOT have
+EXCLUDED_TARGETS = {
+    # context Project inv ProjectToProjectOnlyChildOf
+    #   two Projects can only be connected with child_of (sub-project -> parent project)
+    "project": {
+        "depends_on": {"project"},
+        "links_to": {"project"},
+    },
+}
+
+# CKAN stores reverse relationships too; rules are written for the forward types
+INVERSE_TYPES = {"parent_of": "child_of", "dependency_of": "depends_on", "linked_from": "links_to"}
+
+VERBS = {
+    "child_of": "be part of",
+    "depends_on": "depend on",
+    "links_to": "be related to",
+}
+
+
+def main_categories(pkg):
+    """Return the names of the main categories (main-categories child groups) of a dataset."""
+    try:
+        groups = tk.h.get_selected_group(pkg.get("groups", []), "main-categories") or []
+    except Exception:
+        return set()
+    return {_attr(g, "name") for g in groups}
+
+
+def _category_titles():
+    try:
+        categories = tk.h.get_allowable_children_groups("main-categories") or []
+    except Exception:
+        return {}
+    return {_attr(c, "name"): _attr(c, "title") or _attr(c, "name") for c in categories}
+
+
+def _rule_message(category, rel_type, allowed):
+    titles = _category_titles()
+    verb = tk._(VERBS.get(rel_type, rel_type))
+    if not allowed:
+        return tk._(
+            "Entries of the category “{category}” cannot {verb} other entries."
+        ).format(category=titles.get(category, category), verb=verb)
+    return tk._(
+        "Entries of the category “{category}” can only {verb} entries of the category: {targets}."
+    ).format(
+        category=titles.get(category, category), verb=verb,
+        targets=", ".join("“%s”" % titles.get(t, t) for t in sorted(allowed)),
+    )
+
+
+def _exclusion_message(category, rel_type, excluded):
+    titles = _category_titles()
+    return tk._(
+        "Entries of the category “{category}” cannot {verb} entries of the category: {targets}."
+    ).format(
+        category=titles.get(category, category), verb=tk._(VERBS.get(rel_type, rel_type)),
+        targets=", ".join("“%s”" % titles.get(t, t) for t in sorted(excluded)),
+    )
+
+
+def relation_hint(pkg, rel_type):
+    """Describe the rules for adding rel_type connections to pkg.
+
+    Returns None when there is no restriction, otherwise
+    {"blocked": bool, "message": str}.
+    """
+    messages = []
+    blocked = False
+    for category in sorted(main_categories(pkg)):
+        allowed = RELATION_RULES.get(category, {}).get(rel_type)
+        if allowed is not None:
+            messages.append(_rule_message(category, rel_type, allowed))
+            blocked = blocked or not allowed
+        excluded = EXCLUDED_TARGETS.get(category, {}).get(rel_type)
+        if excluded:
+            messages.append(_exclusion_message(category, rel_type, excluded))
+    if not messages:
+        return None
+    return {"blocked": blocked, "message": " ".join(messages)}
+
+
+def relation_violation(subject, target, rel_type):
+    """Return an error message if subject -[rel_type]-> target breaks a rule, else None."""
+    if rel_type in INVERSE_TYPES:
+        subject, target, rel_type = target, subject, INVERSE_TYPES[rel_type]
+
+    if subject["id"] == target["id"]:
+        return tk._("An entry cannot be connected to itself.")
+
+    target_categories = main_categories(target)
+    for category in main_categories(subject):
+        allowed = RELATION_RULES.get(category, {}).get(rel_type)
+        if allowed is not None and not (allowed & target_categories):
+            return _rule_message(category, rel_type, allowed)
+        excluded = EXCLUDED_TARGETS.get(category, {}).get(rel_type)
+        if excluded and excluded & target_categories:
+            return _exclusion_message(category, rel_type, excluded)
+    return None
+
+
 def related_packages(id, rel_type):
     """Return the packages connected to this dataset with the given relationship type.
 
@@ -64,13 +189,15 @@ def relation_candidates(id, rel_type, q, rows=20):
     existing = set(rel_id_list(related_packages(id, rel_type)))
     pkg = tk.get_action("package_show")(data_dict={"id": id})
 
+    # search more than shown, entries that break a relation rule are left out
     datasets = tk.get_action("package_search")(
-        {}, data_dict={"q": q, "rows": rows, "include_private": True}
+        {}, data_dict={"q": q, "rows": rows * 3, "include_private": True}
     )
     return [
         res for res in datasets["results"]
-        if res["id"] != pkg["id"] and res["id"] not in existing and res.get("organization")
-    ]
+        if res["id"] not in existing and res.get("organization")
+        and not relation_violation(pkg, res, rel_type)
+    ][:rows]
 
 
 def outgoing_relationship(id):

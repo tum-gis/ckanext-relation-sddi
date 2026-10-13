@@ -116,7 +116,8 @@ def new_relation(id):
             except NotAuthorized:
                 h.flash_error(tk._("Unauthorized to create a relationship for this package"))
             except ValidationError as e:
-                h.flash_error(tk._("Relationship cannot be created") + ": " + str(e.error_summary))
+                messages = [m for msgs in e.error_dict.values() for m in (msgs if isinstance(msgs, list) else [msgs])]
+                h.flash_error(tk._("Relationship cannot be created") + ": " + " ".join(map(str, messages)))
             return _redirect_back(id, type_add)
 
         if save_action == "go-metadata":

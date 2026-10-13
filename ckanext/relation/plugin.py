@@ -5,6 +5,7 @@ import ckan.plugins as p
 from ckan.common import config, request
 
 import ckanext.relation.helpers as h
+import ckanext.relation.actions as actions
 
 if p.toolkit.check_ckan_version(min_version='2.9.0'):
     from ckanext.relation.flask_plugin import MixinPlugin
@@ -26,8 +27,14 @@ class RelationPlugin(MixinPlugin, p.SingletonPlugin):
     p.implements(p.ITranslation)                                
     p.implements(p.IConfigurable)
     p.implements(p.ITemplateHelpers)
+    p.implements(p.IActions)
 
     package_link = "/dataset/"
+
+    def get_actions(self):
+        return {
+            "package_relationship_create": actions.package_relationship_create,
+        }
 
     def configure(self, config):
         # Get values from ckan config
@@ -62,6 +69,7 @@ class RelationPlugin(MixinPlugin, p.SingletonPlugin):
             "outgoing_relationship": h.outgoing_relationship,
             "rel_marker_class": h.marker_class,
             "rel_marker_info": h.marker_info,
+            "rel_relation_hint": h.relation_hint,
             "rel_related_packages": h.related_packages,
             "rel_candidates": h.relation_candidates,
         }

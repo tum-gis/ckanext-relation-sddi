@@ -164,6 +164,9 @@
       section.querySelector('[data-rel-toggle]').addEventListener('click', function () {
         setExpanded(section, section.classList.contains('is-collapsed'));
       });
+      if (!section.querySelector('[data-rel-add]')) {
+        return; // relation type not allowed for this entry's category
+      }
       section.querySelector('[data-rel-add]').addEventListener('click', function () {
         openPanel(section);
       });
@@ -192,7 +195,7 @@
       menu.hidden = !open;
       menuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
       if (open) {
-        menu.querySelector('[role="menuitem"]').focus();
+        menu.querySelector('[role="menuitem"]:not([disabled])').focus();
       }
     }
 
@@ -207,7 +210,7 @@
     });
 
     menu.addEventListener('keydown', function (event) {
-      var items = Array.prototype.slice.call(menu.querySelectorAll('[role="menuitem"]'));
+      var items = Array.prototype.slice.call(menu.querySelectorAll('[role="menuitem"]:not([disabled])'));
       var index = items.indexOf(document.activeElement);
       if (event.key === 'Escape') {
         setMenu(false);

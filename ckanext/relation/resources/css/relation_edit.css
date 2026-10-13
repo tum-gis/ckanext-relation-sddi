@@ -298,6 +298,31 @@
   color: var(--rel-muted);
 }
 
+.rel-rule {
+  margin: 8px 0 0;
+  padding: 6px 10px;
+  border-left: 3px solid var(--rel-accent);
+  border-radius: 4px;
+  background: var(--rel-accent-soft);
+  color: var(--rel-text);
+  font-size: 13px;
+}
+
+.rel-rule.is-blocked {
+  border-left-color: #9ca3af;
+  background: var(--rel-soft);
+  color: var(--rel-muted);
+}
+
+.rel-menu-item[disabled] {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+.rel-menu-item[disabled]:hover {
+  background: none;
+}
+
 .rel-section-tools {
   display: flex;
   align-items: center;

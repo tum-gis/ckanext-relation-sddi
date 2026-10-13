@@ -74,6 +74,12 @@ search forms do not have to be nested in it.
    'help': _('Use this to connect entries that are related but not part of a hierarchy.')},
 ] %}
 
+{# Main category rules of this entry (helpers.RELATION_RULES) #}
+{% set hints = {} %}
+{% for s in sections %}
+  {% do hints.update({s.type: h.rel_relation_hint(pkg, s.type)}) %}
+{% endfor %}
+
 {# Filled while rendering the sections, reused by the graph preview and legend #}
 {% set connected = {} %}
 {% set legend = {} %}
@@ -112,7 +118,8 @@ search forms do not have to be nested in it.
           <ul class="rel-menu" id="rel-add-menu" role="menu" hidden>
             {% for s in sections %}
               <li role="none">
-                <button type="button" role="menuitem" class="rel-menu-item rel-kind-{{ s.kind }}" data-rel-open="{{ s.type }}">
+                <button type="button" role="menuitem" class="rel-menu-item rel-kind-{{ s.kind }}" data-rel-open="{{ s.type }}"
+                        {% if hints[s.type] and hints[s.type].blocked %}disabled title="{{ hints[s.type].message }}"{% endif %}>
                   <span class="rel-menu-icon">{{ icon(s.icon) }}</span>
                   <span>
                     <strong>{{ s.title }}</strong>
@@ -137,6 +144,9 @@ search forms do not have to be nested in it.
               <div>
                 <h3 class="rel-section-title">{{ s.title }}</h3>
                 <p class="rel-section-desc">{{ s.description }}</p>
+                {% if hints[s.type] %}
+                  <p class="rel-rule{% if hints[s.type].blocked %} is-blocked{% endif %}">{{ hints[s.type].message }}</p>
+                {% endif %}
               </div>
               <div class="rel-section-tools">
                 <button type="button" class="rel-collapse" data-rel-toggle aria-expanded="true" aria-controls="rel-body-{{ s.type }}" title="{{ _('Show / hide') }}">
@@ -170,6 +180,7 @@ search forms do not have to be nested in it.
                 <p class="rel-empty">{{ s.empty }}</p>
               {% endif %}
 
+              {% if not (hints[s.type] and hints[s.type].blocked) %}
               <button type="button" class="rel-btn rel-btn-outline rel-btn-sm" data-rel-add {% if is_active %}hidden{% endif %}>
                 {{ icon('plus') }} {{ s.add_label }}
               </button>
@@ -199,6 +210,7 @@ search forms do not have to be nested in it.
                   {% endif %}
                 </ul>
               </div>
+              {% endif %}
             </div>
           </div>
         </section>
