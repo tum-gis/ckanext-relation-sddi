@@ -60,6 +60,9 @@ class RelationPlugin(MixinPlugin, p.SingletonPlugin):
             "rel_id_list": h.rel_id_list,
             "has_relationship": h.has_relationship,
             "outgoing_relationship": h.outgoing_relationship,
+            "rel_marker_class": h.marker_class,
+            "rel_related_packages": h.related_packages,
+            "rel_candidates": h.relation_candidates,
         }
 
     # def i18n_directory(self):

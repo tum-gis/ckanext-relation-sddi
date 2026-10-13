@@ -7,3 +7,11 @@ main_css:
 main_js:
   contents:
     - js/cytoscape.min.js
+
+edit_css:
+  contents:
+    - css/relation_edit.css
+
+edit_js:
+  contents:
+    - js/relation_edit.js

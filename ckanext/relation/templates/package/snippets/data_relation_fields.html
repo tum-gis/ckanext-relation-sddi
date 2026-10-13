@@ -1,132 +1,209 @@
-{% import 'macros/form.html' as form %}
+{#
+"Connected Entries" editor used on the Edit Relationship tab and on the last
+stage of the dataset creation.
+
+Adding and removing connections is posted to relation.new_relation through the
+hidden #rel-action-form; buttons reference it with the form="" attribute so the
+search forms do not have to be nested in it.
+#}
 
 {% set pkg = g.pkg_dict %}
-{% set action = form_action or h.url_for(c.link) %}
-{% set placeholder = _('Search resources...') %}
+{% set asset_type = 'asset' if h.ckan_version().split('.')|map('int')|list >= [2, 9, 0] else 'resource' %}
+{% include 'snippets/relation_edit_' ~ asset_type ~ '.html' %}
 
-  <style> 
-            div.scroll { 
-                margin:2px, 2px; 
-                padding:4px;
-                max-height: 300px;
-                #border: solid;
-                overflow: scroll; 				
-                overflow-x: hidden; 
-                overflow-y: auto;
-                flex-direction: column;
-                flex-shrink: 0;		
-                #text-align:justify; 
-            } 
-        </style>
+{% macro icon(name) -%}
+<svg class="rel-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+  {%- if name == 'folder' -%}
+    <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>
+  {%- elif name == 'zap' -%}
+    <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>
+  {%- elif name == 'link' -%}
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+  {%- elif name == 'plus' -%}
+    <path d="M5 12h14"/><path d="M12 5v14"/>
+  {%- elif name == 'x' -%}
+    <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+  {%- elif name == 'chevron-up' -%}
+    <path d="m18 15-6-6-6 6"/>
+  {%- elif name == 'chevron-down' -%}
+    <path d="m6 9 6 6 6-6"/>
+  {%- elif name == 'search' -%}
+    <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+  {%- elif name == 'bulb' -%}
+    <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>
+  {%- endif -%}
+</svg>
+{%- endmacro %}
 
+{% macro result_item(item, rel_type) -%}
+  {% set org = item.organization %}
+  <li class="rel-result">
+    <span class="rel-dot rel-marker-{{ h.rel_marker_class(item) }}" aria-hidden="true"></span>
+    <span class="rel-result-text">
+      <a class="rel-result-title" href="{{ h.url_for(item.type ~ '.read', id=item.name) }}" target="_blank">{{ h.dataset_display_name(item) }}</a>
+      {% if org %}<span class="rel-result-org">{{ org.title or org.name }}</span>{% endif %}
+    </span>
+    <button type="submit" form="rel-action-form" name="relation_add.{{ rel_type }}.{{ item.id }}" value="1" class="rel-btn rel-btn-sm rel-btn-add">
+      {{ icon('plus') }} {{ _('Add') }}
+    </button>
+  </li>
+{%- endmacro %}
 
-{% block package_relationship_fields %}
- 
-  {% block stages %}
-    {# An empty stages variable will not show the stages #}
-    {% if not pkg %}
-      {{ h.snippet('package/snippets/stages.html', stages=['complete','complete','active'], pkg_name=pkg_name) }}
-    {% endif %}
-  {% endblock %}
+{% set sections = [
+  {'type': 'child_of', 'kind': 'part', 'icon': 'folder',
+   'title': _('Part of'),
+   'description': _('This entry is part of these collections or projects.'),
+   'add_label': _('Add parent'),
+   'empty': _('This entry is not part of any collection or project yet.'),
+   'help': _('Use this to show that this entry is part of another collection or project.')},
+  {'type': 'depends_on', 'kind': 'depends', 'icon': 'zap',
+   'title': _('Depends on'),
+   'description': _('This entry depends on the following entries.'),
+   'add_label': _('Add dependency'),
+   'empty': _('This entry does not depend on other entries yet.'),
+   'help': _('Use this to indicate that this entry needs another entry, e.g. input data or a method.')},
+  {'type': 'links_to', 'kind': 'related', 'icon': 'link',
+   'title': _('Related to'),
+   'description': _('Other entries that are related to this one.'),
+   'add_label': _('Add related entry'),
+   'empty': _('No related entries yet.'),
+   'help': _('Use this to connect entries that are related but not part of a hierarchy.')},
+] %}
 
+{% set active_type = request.args.get('rel_type') %}
+{% set active_q = request.args.get('q', '') %}
 
+<div class="rel-editor"
+     data-search-url="{{ h.url_for('relation.search_relation', id=pkg.id) }}"
+     data-i18n="{{ h.dump_json({
+        'add': _('Add'),
+        'searching': _('Searching…'),
+        'noResults': _('No matching entries found.'),
+        'minChars': _('Type at least 2 characters to search.'),
+        'error': _('The search failed. Please try again.')
+     }) }}">
 
- <section class="module-content">
- {% block search_input %}
+  <form id="rel-action-form" method="post" action="{{ h.url_for('relation.new_relation', id=pkg.id) }}">
+    {{ h.csrf_input() if 'csrf_input' in h }}
+    <input type="hidden" name="next" value="{{ request.path }}">
+  </form>
 
-<form {% if form_id %}id="{{ form_id }}1" {% endif %}class="search-form{% if no_bottom_border %} no-bottom-border{% endif %}" method="get" data-module="select-switch">
-  {{ h.csrf_input() if 'csrf_input' in h }}
-    <div >
-      {% block form %}
-        {% set facets = {
-          'fields': g.fields_grouped,
-          'search': g.search_facets,
-          'titles': g.facet_titles,
-          'translated_fields': g.translated_fields,
-          'remove_field': g.remove_field }
-        %}
-        {% set sorting = [
-          (_('Relevance'), 'score desc, metadata_modified desc'),
-          (_('Name Ascending'), 'title_string asc'),
-          (_('Name Descending'), 'title_string desc'),
-          (_('Last Modified'), 'metadata_modified desc'),
-          (_('Popular'), 'views_recent desc') if g.tracking_enabled else (false, false) ]
-        %}
+  <div class="rel-layout">
+    <div class="rel-main">
 
+      <header class="rel-header">
+        <div>
+          <h2 class="rel-heading">{{ _('Connected Entries') }}</h2>
+          <p class="rel-subheading">{{ _('Manage how this entry is connected to other entries.') }}</p>
+        </div>
 
-  <div class="input-group search-input-group">
-      <input aria-label="{% block header_site_search_label %}{{ placeholder }}{% endblock %}" id="{{ field_search }}" type="text" class="form-control input-lg" name="q" value="{{ query }}" autocomplete="on" placeholder="{{ placeholder }}">
-      {% block search_input_button %}
-      <span class="input-group-btn">
-        <button class="btn btn-default btn-lg" type="submit" value="search" aria-label="{{_('Submit')}}">
-          <i class="fa fa-search"></i>
-        </button>
-      </span>
-      </div>
-      {% endblock %} 
+        <div class="rel-dropdown">
+          <button type="button" class="rel-btn rel-btn-outline" data-rel-menu-toggle aria-haspopup="true" aria-expanded="false" aria-controls="rel-add-menu">
+            {{ icon('plus') }} {{ _('Add connection') }} {{ icon('chevron-down') }}
+          </button>
+          <ul class="rel-menu" id="rel-add-menu" role="menu" hidden>
+            {% for s in sections %}
+              <li role="none">
+                <button type="button" role="menuitem" class="rel-menu-item rel-kind-{{ s.kind }}" data-rel-open="{{ s.type }}">
+                  <span class="rel-menu-icon">{{ icon(s.icon) }}</span>
+                  <span>
+                    <strong>{{ s.title }}</strong>
+                    <small>{{ s.description }}</small>
+                  </span>
+                </button>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </header>
+
+      {% for s in sections %}
+        {% set items = h.rel_related_packages(pkg.id, s.type) %}
+        {% set is_active = active_type == s.type %}
+        <section class="rel-section rel-kind-{{ s.kind }}" id="rel-section-{{ s.type }}" data-rel-type="{{ s.type }}">
+          <div class="rel-section-icon">{{ icon(s.icon) }}</div>
+
+          <div class="rel-section-content">
+            <div class="rel-section-header">
+              <div>
+                <h3 class="rel-section-title">{{ s.title }}</h3>
+                <p class="rel-section-desc">{{ s.description }}</p>
+              </div>
+              <div class="rel-section-tools">
+                <button type="button" class="rel-collapse" data-rel-toggle aria-expanded="true" aria-controls="rel-body-{{ s.type }}" title="{{ _('Show / hide') }}">
+                  {{ icon('chevron-up') }}<span class="sr-only">{{ _('Show / hide') }} {{ s.title }}</span>
+                </button>
+                <span class="rel-count" title="{{ _('Number of connections') }}">{{ items|length }}</span>
+              </div>
+            </div>
+
+            <div class="rel-section-body" id="rel-body-{{ s.type }}">
+              {% if items %}
+                <ul class="rel-chips">
+                  {% for item in items %}
+                    {% set org = item.organization %}
+                    <li class="rel-chip">
+                      <span class="rel-dot rel-marker-{{ h.rel_marker_class(item) }}" aria-hidden="true"></span>
+                      <a href="{{ h.url_for(item.type ~ '.read', id=item.name) }}" {% if org %}title="{{ org.title or org.name }}"{% endif %}>{{ h.dataset_display_name(item) }}</a>
+                      <button type="submit" form="rel-action-form" name="relation_remove.{{ s.type }}.{{ item.id }}" value="1"
+                              class="rel-chip-remove"
+                              data-rel-confirm="{{ _('Remove the connection to “{title}”?').format(title=h.dataset_display_name(item)) }}"
+                              title="{{ _('Remove connection') }}">
+                        {{ icon('x') }}<span class="sr-only">{{ _('Remove connection') }}: {{ h.dataset_display_name(item) }}</span>
+                      </button>
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% else %}
+                <p class="rel-empty">{{ s.empty }}</p>
+              {% endif %}
+
+              <button type="button" class="rel-btn rel-btn-outline rel-btn-sm" data-rel-add {% if is_active %}hidden{% endif %}>
+                {{ icon('plus') }} {{ s.add_label }}
+              </button>
+
+              <div class="rel-add-panel" data-rel-panel {% if not is_active %}hidden{% endif %}>
+                <form class="rel-search" method="get" action="{{ request.path }}#rel-section-{{ s.type }}" role="search" data-rel-search-form>
+                  <input type="hidden" name="rel_type" value="{{ s.type }}">
+                  <label class="sr-only" for="rel-q-{{ s.type }}">{{ s.add_label }}</label>
+                  <span class="rel-search-field">
+                    {{ icon('search') }}
+                    <input id="rel-q-{{ s.type }}" type="search" name="q" autocomplete="off"
+                           value="{{ active_q if is_active else '' }}"
+                           placeholder="{{ _('Search entries by title or keyword…') }}" data-rel-search>
+                  </span>
+                  <button type="submit" class="rel-btn rel-btn-primary rel-btn-sm">{{ _('Search') }}</button>
+                  <button type="button" class="rel-btn rel-btn-link rel-btn-sm" data-rel-cancel>{{ _('Cancel') }}</button>
+                </form>
+
+                <ul class="rel-results" aria-live="polite" data-rel-results>
+                  {% if is_active and active_q %}
+                    {% set candidates = h.rel_candidates(pkg.id, s.type, active_q) %}
+                    {% for item in candidates %}
+                      {{ result_item(item, s.type) }}
+                    {% else %}
+                      <li class="rel-results-msg">{{ _('No matching entries found.') }}</li>
+                    {% endfor %}
+                  {% endif %}
+                </ul>
+              </div>
+            </div>
           </div>
+        </section>
+      {% endfor %}
 
+      {% snippet 'package/snippets/edit_data_relation_fields.html', pkg_name=pkg.name %}
+    </div>
 
-	{% if request.args %}
-
-{% block package_search_results_list %}  
-       <div id="{{ target }}" class="collapse show scroll"> 
-<table class="table table-striped table-bordered table-condensed">
-      <thead>
-        <col width="130">
-        <col width="55">
-        <tr>
-          <th scope="col">{{ _('Dataset') }}</th>
-          <th scope="col">{{ _('Organization') }}</th>
-
-        </tr>
-      </thead>
-      <tbody>
-	{% for depcy in h.package_all(request.args) %}
-        {% set org = depcy.organization %}
-		{#% if depcy.id != pkg.id %#}
-        {% if org %}
-          <tr>
-            <td class="dataset-details"> {{ h.dataset_link(depcy) }} </td>
-            <td> <a href="{{  h.url_for(org.type + '_read', id=org.name, )}}">{{ org.title }}</a> </td>
-          </tr>
-		    {% endif %}
-        {% endfor %}
-      </tbody>
-    </table>
+    <aside class="rel-aside">
+      <h3 class="rel-aside-title">{{ icon('bulb') }} {{ _('About connections') }}</h3>
+      {% for s in sections %}
+        <div class="rel-aside-item rel-kind-{{ s.kind }}">
+          <h4>{{ icon(s.icon) }} {{ s.title }}</h4>
+          <p>{{ s.help }}</p>
+        </div>
+      {% endfor %}
+      <p class="rel-aside-note">{{ _('Changes are saved immediately when you add or remove a connection.') }}</p>
+    </aside>
+  </div>
 </div>
-  {% endblock %}
-	 {% endif %}
-		  
-</form> 
-
-  {% endblock %}
- 
- <h2>{{ _('References to other resources') }}</h2>
- <section>
-    {% block rel_dependency_edit %}
-        {% snippet 'package/snippets/edit_form.html', form_id='dataset-search-dep', target='dep', field_search ='field-giant-search1', ref_id = 'ref_id1', query_rel=h.rel_get_dependency_package(pkg.id), type='depends_on', query=c.q, sorting=sorting, sorting_selected=c.sort_by_selected,  facets=facets, error=c.query_error, fields=c.fields, title=_('This resource is dependent on the following resources:') %}
-	{% endblock %}
- </section>
-  <section>
-    {% block rel_parent_edit%}
-        {% snippet 'package/snippets/edit_form.html', form_id='dataset-search-par', target='par',field_search ='field-giant-search2', ref_id = 'ref_id2', query_rel=h.rel_get_parent_package(pkg.id), type='child_of', query=c.q, sorting=sorting, sorting_selected=c.sort_by_selected, placeholder=_('Search resources') + '...', facets=facets, error=c.query_error, fields=c.fields, title=_('This resource is part of the following resources:') %}
-	{% endblock %}
- </section>
-  <section>
-    {% block rel_linked_edit %}
-        {% snippet 'package/snippets/edit_form.html', form_id='dataset-search-lnk', target='lnk', field_search ='field-giant-search3', ref_id = 'ref_id3', query_rel=h.rel_get_linked_package(pkg.id), type='links_to', query=c.q, sorting=sorting, sorting_selected=c.sort_by_selected, placeholder=_('Search resources') + '...', facets=facets, error=c.query_error, fields=c.fields, title=_('This resource refers to the following resources:')	%}
-	{% endblock %}
- </section>
-  </section>
- 
-{% endblock %}
-
-    {% block data_rel_buttons %}
-     {% if pkg %}
-      {% snippet 'package/snippets/edit_data_relation_fields.html', extras=data.extras, errors=errors, pkg_name=pkg.name %}
-      {%endif%}
-     {% endblock %}
-	
-
-{% endblock %}

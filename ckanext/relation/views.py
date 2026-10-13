@@ -1,6 +1,6 @@
 import cgi
 
-from flask import Blueprint
+from flask import Blueprint, jsonify
 from flask.views import MethodView
 
 import ckan.model as model
@@ -11,6 +11,8 @@ import ckan.lib.navl.dictization_functions as dict_fns
 import ckan.lib.base as base
 
 from ckan.lib.plugins import lookup_package_plugin
+
+import ckanext.relation.helpers as rel_helpers
 
 relation = Blueprint('relation', __name__)
 
@@ -54,6 +56,26 @@ def relations(id):
     )
 
 
+def _find_relation_param(data, prefix):
+    """Return (type, object_id) of a submitted '<prefix>.<type>.<id>' button."""
+    for param in data:
+        if param.startswith(prefix + "."):
+            parts = param.split(".")
+            if len(parts) == 3 and parts[1] in rel_helpers.RELATION_TYPES:
+                return parts[1], parts[2]
+    return None, None
+
+
+def _redirect_back(id, rel_type=None):
+    """Go back to the page the form was posted from (edit or new dataset stage)."""
+    next_url = tk.request.form.get("next", "")
+    if not next_url.startswith("/") or next_url.startswith(("//", "/\\")):
+        next_url = h.url_for("relation.edit_relation", id=id)
+    if rel_type:
+        next_url += "#rel-section-" + rel_type
+    return h.redirect_to(next_url)
+
+
 def new_relation(id):
     tk.g.link = str("/dataset/relationship/edit/" + id)
 
@@ -62,7 +84,6 @@ def new_relation(id):
                 dict_fns.unflatten(tuplize_dict(parse_params(tk.request.form)))
             )
         save_action = data.get("save")
-        print("new data dictionary !!!!!!!!!!!!!!!!")
         context = {
             "model": model,
             "session": model.Session,
@@ -70,59 +91,64 @@ def new_relation(id):
             "auth_user_obj": tk.g.userobj,
         }
 
-        # Remove button in the edit page
-        removed_rel = None
-        type_rem = None
-        for param in data:
-            if param.startswith("relation_remove"):
-                removed_rel = param.split(".")[-1]
-                type_rem = param.split(".")[-2]
-                break
+        # Remove button (x on a connection chip)
+        type_rem, removed_rel = _find_relation_param(data, "relation_remove")
         if removed_rel:
             data_dict = {"subject": id, "object": removed_rel, "type": type_rem}
-
             try:
                 tk.get_action("package_relationship_delete")(context, data_dict)
+                h.flash_success(tk._("Connection removed."))
             except NotFound:
-                tk.abort(404, tk._("Relationship not found"))
-            try:
-                tk.check_access("package_relationship_create", context, data_dict)
+                h.flash_error(tk._("Relationship not found"))
             except NotAuthorized:
-                tk.abort(
-                    401, tk._("Unauthorized to create a relationship for this package")
-                )
-            return h.redirect_to("/dataset/relationship/edit/" + id)
+                h.flash_error(tk._("Unauthorized to delete a relationship for this package"))
+            return _redirect_back(id, type_rem)
 
-        # add button in the edit page
-        add_rel = None
-        type_add = None
-        for param in data:
-            if param.startswith("relation_add"):
-                add_rel = param.split(".")[-1]
-                type_add = param.split(".")[-2]
-                break
-
+        # Add button in the search results
+        type_add, add_rel = _find_relation_param(data, "relation_add")
         if add_rel:
-            # context={'ignore_auth': True}
             data_dict = {"subject": id, "object": add_rel, "type": type_add}
-
             try:
                 tk.get_action("package_relationship_create")(context, data_dict)
+                h.flash_success(tk._("Connection added."))
             except NotFound:
-                tk.abort(404, tk._("Relationship cannot be created"))
-
-            # try:
-            # 	check_access('package_relationship_create', context, {'object': add_rel, 'subject': id})#{"package_id": pkg_dict["id"]})
-            # 	print('it is done')
-            # except NotAuthorized:
-            #    abort(401, _('Unauthorized to create a relationship for this package'))
-            return h.redirect_to("/dataset/relationship/edit/" + id)
+                h.flash_error(tk._("Relationship cannot be created"))
+            except NotAuthorized:
+                h.flash_error(tk._("Unauthorized to create a relationship for this package"))
+            except ValidationError as e:
+                h.flash_error(tk._("Relationship cannot be created") + ": " + str(e.error_summary))
+            return _redirect_back(id, type_add)
 
         if save_action == "go-metadata":
             # XXX race condition if another user edits/deletes
             return h.redirect_to('dataset.read', id=id)
 
     return h.redirect_to("/dataset/relationship/edit/" + id)
+
+
+def search_relation(id):
+    """JSON search used by the live search of the 'Add connection' panels."""
+    rel_type = tk.request.args.get("type", "")
+    q = tk.request.args.get("q", "").strip()
+    try:
+        candidates = rel_helpers.relation_candidates(id, rel_type, q)
+    except (NotFound, NotAuthorized):
+        return jsonify({"results": []}), 404
+
+    results = []
+    for pkg in candidates:
+        try:
+            url = h.url_for(pkg["type"] + ".read", id=pkg["name"])
+        except Exception:
+            url = "/dataset/" + pkg["name"]
+        results.append({
+            "id": pkg["id"],
+            "title": h.dataset_display_name(pkg),
+            "organization": pkg["organization"].get("title") or pkg["organization"].get("name"),
+            "url": url,
+            "marker": rel_helpers.marker_class(pkg),
+        })
+    return jsonify({"results": results})
 
 
 def _resource_form(package_type):
@@ -373,6 +399,7 @@ def edit_relation(id, data=None, errors=None):
 
 relation.add_url_rule("/dataset/relationship/<id>", view_func=relations),
 relation.add_url_rule("/dataset/relationship/new_relationship/<id>", view_func=new_relation, methods=("GET", "POST")),
+relation.add_url_rule("/dataset/relationship/search/<id>", view_func=search_relation),
 relation.add_url_rule("/dataset/<id>/resource/new", view_func=CreateResource.as_view(str(u'new_res'))),
 relation.add_url_rule("/dataset/relationship/add/<id>", view_func=finalrel, methods=("GET", "POST")),
 relation.add_url_rule("/dataset/relationship/edit/<id>", view_func=edit_relation, methods=("GET", "POST")),
