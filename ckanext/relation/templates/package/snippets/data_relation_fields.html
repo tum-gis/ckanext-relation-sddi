@@ -120,7 +120,6 @@ search forms do not have to be nested in it.
               <li role="none">
                 <button type="button" role="menuitem" class="rel-menu-item rel-kind-{{ s.kind }}" data-rel-open="{{ s.type }}"
                         {% if hints[s.type] and hints[s.type].blocked %}disabled title="{{ hints[s.type].message }}"{% endif %}>
-                  <span class="rel-menu-icon">{{ icon(s.icon) }}</span>
                   <span>
                     <strong>{{ s.title }}</strong>
                     <small>{{ s.description }}</small>
@@ -137,8 +136,6 @@ search forms do not have to be nested in it.
         {% set is_active = active_type == s.type %}
         {% do connected.update({s.type: items}) %}
         <section class="rel-section rel-kind-{{ s.kind }}" id="rel-section-{{ s.type }}" data-rel-type="{{ s.type }}">
-          <div class="rel-section-icon">{{ icon(s.icon) }}</div>
-
           <div class="rel-section-content">
             <div class="rel-section-header">
               <div>
@@ -200,7 +197,7 @@ search forms do not have to be nested in it.
                 </form>
 
                 <ul class="rel-results" aria-live="polite" data-rel-results>
-                  {% if is_active and active_q %}
+                  {% if is_active %}
                     {% set candidates = h.rel_candidates(pkg.id, s.type, active_q) %}
                     {% for item in candidates %}
                       {{ result_item(item, s.type) }}
@@ -246,56 +243,57 @@ search forms do not have to be nested in it.
         </a>
       </div>
 
-      {% if has_connections %}
-        <div class="rel-graph" data-rel-graph>
-          <svg class="rel-graph-edges" aria-hidden="true" focusable="false">
-            <defs>
-              {% for kind in ['part', 'depends', 'related'] %}
-                <marker id="rel-arrow-{{ kind }}" class="rel-kind-{{ kind }}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-                  <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
-                </marker>
-              {% endfor %}
-            </defs>
-          </svg>
+      <div class="rel-graph{% if not has_connections %} rel-graph-empty{% endif %}" data-rel-graph>
+        <svg class="rel-graph-edges" aria-hidden="true" focusable="false">
+          <defs>
+            {% for kind in ['part', 'depends', 'related'] %}
+              <marker id="rel-arrow-{{ kind }}" class="rel-kind-{{ kind }}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+              </marker>
+            {% endfor %}
+          </defs>
+        </svg>
 
-          {% if incoming %}
-            <div class="rel-graph-top">
-              <span class="rel-graph-caption">{{ _('Pointing to this entry') }}</span>
-              <ul class="rel-graph-group">
-                {% for conn in incoming %}
-                  <li class="rel-graph-node rel-kind-{{ conn.kind }}" data-rel-graph-node="{{ conn.kind }}" data-rel-direction="in" title="{{ conn.label }}">
-                    <span class="rel-dot rel-marker-{{ conn.marker }}" aria-hidden="true"></span>
-                    <a href="{{ h.url_for(conn.item.type ~ '.read', id=conn.item.name) }}">{{ h.dataset_display_name(conn.item) }}</a>
-                  </li>
-                {% endfor %}
-              </ul>
-            </div>
-          {% endif %}
-
-          <div class="rel-graph-center">
-            <div class="rel-graph-node rel-graph-self" data-rel-graph-center>
-              <span class="rel-graph-self-icon">{{ icon('database') }}</span>
-              <span>
-                <small>{{ _('This entry') }}</small>
-                <strong>{{ h.dataset_display_name(pkg) }}</strong>
-              </span>
-            </div>
-          </div>
-
-          {% for rel_type, kind, slot in graph_slots if connected[rel_type] %}
-            <ul class="rel-graph-group {{ slot }}">
-              {% for item in connected[rel_type] %}
-                <li class="rel-graph-node rel-kind-{{ kind }}" data-rel-graph-node="{{ kind }}">
-                  <span class="rel-dot rel-marker-{{ item._rel_marker }}" aria-hidden="true"></span>
-                  <a href="{{ h.url_for(item.type ~ '.read', id=item.name) }}">{{ h.dataset_display_name(item) }}</a>
+        {% if incoming %}
+          <div class="rel-graph-top">
+            <span class="rel-graph-caption">{{ _('Pointing to this entry') }}</span>
+            <ul class="rel-graph-group">
+              {% for conn in incoming %}
+                <li class="rel-graph-node rel-kind-{{ conn.kind }}" data-rel-graph-node="{{ conn.kind }}" data-rel-direction="in" title="{{ conn.label }}">
+                  <span class="rel-dot rel-marker-{{ conn.marker }}" aria-hidden="true"></span>
+                  <a href="{{ h.url_for(conn.item.type ~ '.read', id=conn.item.name) }}">{{ h.dataset_display_name(conn.item) }}</a>
                 </li>
               {% endfor %}
             </ul>
-          {% endfor %}
+          </div>
+        {% endif %}
+
+        <div class="rel-graph-center">
+          <div class="rel-graph-node rel-graph-self" data-rel-graph-center>
+            {% set self_marker = h.rel_marker_info(pkg) %}
+            {% if self_marker.title %}{% do legend.update({self_marker.cls: self_marker.title}) %}{% endif %}
+            <span class="rel-dot rel-marker-{{ self_marker.cls }}" aria-hidden="true" {% if self_marker.title %}title="{{ self_marker.title }}"{% endif %}></span>
+            <span>
+              <small>{{ _('This entry') }}</small>
+              <strong>{{ h.dataset_display_name(pkg) }}</strong>
+            </span>
+          </div>
+          {% if not has_connections %}
+            <p class="rel-preview-empty">{{ _('No connections yet. Add one above and it will appear here.') }}</p>
+          {% endif %}
         </div>
-      {% else %}
-        <p class="rel-preview-empty">{{ _('No connections yet. Add one above and it will appear here.') }}</p>
-      {% endif %}
+
+        {% for rel_type, kind, slot in graph_slots if connected[rel_type] %}
+          <ul class="rel-graph-group {{ slot }}">
+            {% for item in connected[rel_type] %}
+              <li class="rel-graph-node rel-kind-{{ kind }}" data-rel-graph-node="{{ kind }}">
+                <span class="rel-dot rel-marker-{{ item._rel_marker }}" aria-hidden="true"></span>
+                <a href="{{ h.url_for(item.type ~ '.read', id=item.name) }}">{{ h.dataset_display_name(item) }}</a>
+              </li>
+            {% endfor %}
+          </ul>
+        {% endfor %}
+      </div>
     </section>
 
     <aside class="rel-legend">
@@ -318,15 +316,5 @@ search forms do not have to be nested in it.
 
     {% snippet 'package/snippets/edit_data_relation_fields.html', pkg_name=pkg.name %}
 
-    <aside class="rel-aside">
-      <h3 class="rel-aside-title">{{ icon('bulb') }} {{ _('About connections') }}</h3>
-      {% for s in sections %}
-        <div class="rel-aside-item rel-kind-{{ s.kind }}">
-          <h4>{{ icon(s.icon) }} {{ s.title }}</h4>
-          <p>{{ s.help }}</p>
-        </div>
-      {% endfor %}
-      <p class="rel-aside-note">{{ _('Changes are saved immediately when you add or remove a connection.') }}</p>
-    </aside>
   </div>
 </div>

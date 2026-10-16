@@ -4,14 +4,19 @@ ckanext-relation
 Overview
 ------------
 
-This extension provides an UI for creating, deleting and viewing relationships between datasets.
-If the extension is used with [ckanext-grouphierarchy-sddi](https://github.com/tum-gis/ckanext-grouphierarchy-sddi) extension, the graphical representation will be in the colours of the groups defined in the [ckanext-grouphierarchy-sddi](https://github.com/tum-gis/ckanext-grouphierarchy-sddi) extension.
-
-In this implementation which is specifically designed for the requirements of [HEF, TUM](http://www.hef.wzw.tum.de/).
-
-In the following image is one example of the implementation:
+This extension provides a UI for creating, deleting, and viewing relationships between datasets in a CKAN catalog. It is specifically designed for the [Smart District Data Infrastructure (SDDI)](https://github.com/tum-gis/SDDI-CKAN-Docker) and the requirements of [HEF, TUM](http://www.hef.wzw.tum.de/).
 
 ![image](https://github.com/tum-gis/ckanext-relation-sddi/assets/93824048/5dcf7a0a-181c-48f2-be57-4f645be2a5a6)
+
+Key features:
+
+- **Relationship editor** — an *Edit Relationship* tab on every catalog entry lets users add and remove connections of three types: *Part of*, *Depends on*, and *Related to*.
+- **Inline search** — entries can be found by clicking on *Search*.
+- **Relationship graph preview** — a compact node-and-arrow diagram shows all direct connections at a glance. A full interactive graph is available via *Open full graph*.
+- **Category colours** — when used together with [ckanext-grouphierarchy-sddi](https://github.com/tum-gis/ckanext-grouphierarchy-sddi), each entry node is coloured according to its main category matching the colours used throughout the catalog.
+- **OCL rule enforcement** — relationship constraints from the SDDI data model are enforced both in the UI and through the API (see [Relationship rules](#relationship-rules) below).
+
+![ui-relations](images/ui-relations.png)
 
 ------------------
 Relationship types

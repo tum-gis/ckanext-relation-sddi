@@ -7,7 +7,7 @@
   'use strict';
 
   var SEARCH_DELAY = 250;
-  var MIN_CHARS = 2;
+  var MIN_CHARS = 0;
 
   function each(list, fn) {
     Array.prototype.forEach.call(list, fn);
@@ -106,14 +106,6 @@
         var q = input.value.trim();
         var current = ++requestId;
 
-        if (q.length < MIN_CHARS) {
-          if (q.length) {
-            message(list, i18n.minChars || 'Type at least 2 characters to search.');
-          } else {
-            list.innerHTML = '';
-          }
-          return;
-        }
 
         message(list, i18n.searching || 'Searching…');
         var url = searchUrl + '?type=' + encodeURIComponent(relType) + '&q=' + encodeURIComponent(q);

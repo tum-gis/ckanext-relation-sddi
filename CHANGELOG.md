@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 For releases `< 1.0.0` minor version steps may indicate breaking changes too.
+## [1.2.0] - 
+
+### Added
+- Enforcement of OCL relationship constraints from the SDDI model:
+  - `ChildOfMeansSubprojectToParent`: Project entries can only use `child_of` to target other Project entries.
+  - `ProjectToProjectOnlyChildOf`: Project entries cannot use `depends_on` or `links_to` with other Project entries.
+  - `OutgoingConstraints` (DigitalTwin): `child_of` is not allowed for DigitalTwin entries; `links_to` is restricted to DigitalTwin or Project targets.
+
+### Changed
+- Relation section cards now span full width of the editor area, making better use of available space.
+- Search now returns results immediately without requiring a minimum number of characters — clicking Search with an empty field lists recent entries.
+
 ## [1.1.2] - 2025-05-13
 ### Fixed
 - Fix overlapping edges and increased default edge length

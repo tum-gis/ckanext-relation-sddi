@@ -183,7 +183,7 @@ def related_packages(id, rel_type):
 
 def relation_candidates(id, rel_type, q, rows=20):
     """Return datasets matching 'q' that can still be connected to dataset 'id'."""
-    if rel_type not in RELATION_TYPES or not q:
+    if rel_type not in RELATION_TYPES:
         return []
 
     existing = set(rel_id_list(related_packages(id, rel_type)))
@@ -191,7 +191,7 @@ def relation_candidates(id, rel_type, q, rows=20):
 
     # search more than shown, entries that break a relation rule are left out
     datasets = tk.get_action("package_search")(
-        {}, data_dict={"q": q, "rows": rows * 3, "include_private": True}
+        {}, data_dict={"q": q if q else "*:*", "rows": rows * 3, "include_private": True}
     )
     return [
         res for res in datasets["results"]
