@@ -10,7 +10,7 @@ For releases `< 1.0.0` minor version steps may indicate breaking changes too.
 ### Added
 - Enforcement of OCL relationship constraints from the SDDI model:
   - `ChildOfMeansSubprojectToParent`: Project entries can only use `child_of` to target other Project entries.
-  - `ProjectToProjectOnlyChildOf`: Project entries cannot use `depends_on` or `links_to` with other Project entries.
+  - `ProjectToProjectOnlyChildOf`: Project entries cannot use `depends_on` with other Project entries (`links_to` between projects is allowed).
   - `OutgoingConstraints` (DigitalTwin): `child_of` is not allowed for DigitalTwin entries; `links_to` is restricted to DigitalTwin or Project targets.
 
 ### Changed

@@ -56,7 +56,7 @@ inv ChildOfMeansSubprojectToParent:
 
 ### `ProjectToProjectOnlyChildOf` (Project)
 
-Two Projects can only be connected with **Part of**. **Depends on** and **Related to** between two Projects are not allowed. A Project can still depend on or be related to entries of other categories.
+Two Projects can only be connected with **Part of** or **Related to**. **Depends on** between two Projects is not allowed. A Project can still depend on entries of other categories.
 
 ```
 context Project
@@ -131,7 +131,7 @@ RELATION_RULES = {
 
 # subject category -> relation type -> main categories the target must NOT have
 EXCLUDED_TARGETS = {
-    "project": {"depends_on": {"project"}, "links_to": {"project"}},
+    "project": {"depends_on": {"project"}},
 }
 ```
 

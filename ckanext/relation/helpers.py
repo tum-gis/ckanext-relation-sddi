@@ -67,7 +67,6 @@ EXCLUDED_TARGETS = {
     #   two Projects can only be connected with child_of (sub-project -> parent project)
     "project": {
         "depends_on": {"project"},
-        "links_to": {"project"},
     },
 }
 
