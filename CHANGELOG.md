@@ -9,9 +9,10 @@ For releases `< 1.0.0` minor version steps may indicate breaking changes too.
 
 ### Added
 - Enforcement of OCL relationship constraints from the SDDI model:
+  - `SameCategoryPartOf`: **Part of** (`child_of`) relations can only be created between entries of the same main category.
   - `ChildOfMeansSubprojectToParent`: Project entries can only use `child_of` to target other Project entries.
   - `ProjectToProjectOnlyChildOf`: Project entries cannot use `depends_on` with other Project entries (`links_to` between projects is allowed).
-  - `OutgoingConstraints` (DigitalTwin): `child_of` is not allowed for DigitalTwin entries; `links_to` is restricted to DigitalTwin or Project targets.
+  - `OutgoingConstraints` (DigitalTwin): `links_to` is restricted to DigitalTwin or Project targets; `child_of` follows the general same-category rule (a Digital Twin can be part of another Digital Twin).
 
 ### Changed
 - Relation section cards now span full width of the editor area, making better use of available space.

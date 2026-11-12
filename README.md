@@ -38,6 +38,10 @@ Relationship rules
 
 Which relationships are allowed depends on the **main category** of the catalog entries, e.g. *Projekt* or *Digitaler Zwilling* (the child groups of the `main-categories` group). The rules come from OCL invariants of the SDDI data model.
 
+### `SameCategoryPartOf` (All categories)
+
+**Part of** (`child_of`) relations can only be created between entries of the same main category. For example, a Software entry can only be part of another Software entry, a Projekt entry can only be part of another Projekt entry, and so on.
+
 ### `ChildOfMeansSubprojectToParent` (Project)
 
 A Project can only be **Part of** another Project. A sub-project always belongs to a parent project, never to another kind of entry.
@@ -75,7 +79,7 @@ A Digital Twin:
 
 - can **depend on** entries of any category,
 - can be **related to** Digital Twins and Projects only,
-- can never be **part of** another entry.
+- can be **part of** another Digital Twin only (same-category rule).
 
 ```
 context DigitalTwin
@@ -123,6 +127,9 @@ An entry cannot be connected to itself (`l.target <> self` in the invariants abo
 The rules are defined in [`ckanext/relation/helpers.py`](ckanext/relation/helpers.py), using the main category names (e.g. `project`, `digital-twin`):
 
 ```python
+# Relation types where subject and target must share at least one main category.
+SAME_CATEGORY_TYPES = {"child_of"}
+
 # subject category -> relation type -> main categories the target MUST have
 RELATION_RULES = {
     "project": {"child_of": {"project"}},
@@ -137,6 +144,7 @@ EXCLUDED_TARGETS = {
 
 - A relation type that is not listed is allowed to any target.
 - An empty set (`set()`) in `RELATION_RULES` means the type is not allowed for that category.
+- `SAME_CATEGORY_TYPES` applies to all categories that do not already have an explicit `RELATION_RULES` entry for that type.
 
 The check itself is in `relation_violation()`. It is called from the `package_relationship_create` action in [`ckanext/relation/actions.py`](ckanext/relation/actions.py).
 

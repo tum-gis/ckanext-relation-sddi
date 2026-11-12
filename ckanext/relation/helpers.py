@@ -54,7 +54,6 @@ RELATION_RULES = {
     #   DigitalTwin / Project targets: links_to or depends_on
     #   all other targets:             depends_on only
     "digital-twin": {
-        "child_of": set(),
         "links_to": {"digital-twin", "project"},
     },
 }
@@ -69,6 +68,11 @@ EXCLUDED_TARGETS = {
         "depends_on": {"project"},
     },
 }
+
+# Relation types where subject and target must share at least one main category.
+# Applies to all categories that do not already have an explicit RELATION_RULES entry
+# for that type (e.g. digital-twin keeps its "child_of not allowed" rule unchanged).
+SAME_CATEGORY_TYPES = {"child_of"}
 
 # CKAN stores reverse relationships too; rules are written for the forward types
 INVERSE_TYPES = {"parent_of": "child_of", "dependency_of": "depends_on", "linked_from": "links_to"}
@@ -135,6 +139,8 @@ def relation_hint(pkg, rel_type):
         if allowed is not None:
             messages.append(_rule_message(category, rel_type, allowed))
             blocked = blocked or not allowed
+        elif rel_type in SAME_CATEGORY_TYPES:
+            messages.append(_rule_message(category, rel_type, {category}))
         excluded = EXCLUDED_TARGETS.get(category, {}).get(rel_type)
         if excluded:
             messages.append(_exclusion_message(category, rel_type, excluded))
@@ -156,6 +162,9 @@ def relation_violation(subject, target, rel_type):
         allowed = RELATION_RULES.get(category, {}).get(rel_type)
         if allowed is not None and not (allowed & target_categories):
             return _rule_message(category, rel_type, allowed)
+        elif allowed is None and rel_type in SAME_CATEGORY_TYPES:
+            if not ({category} & target_categories):
+                return _rule_message(category, rel_type, {category})
         excluded = EXCLUDED_TARGETS.get(category, {}).get(rel_type)
         if excluded and excluded & target_categories:
             return _exclusion_message(category, rel_type, excluded)
