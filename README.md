@@ -289,13 +289,9 @@ An entry cannot be connected to itself (`l.target <> self` in the invariants abo
 
 ### Overview
 
-| From \ To | Project | Digital Twin | Other categories |
-|---|---|---|---|
-| **Project** | Part of, Depends on, Related to | Depends on, Related to | Depends on, Related to |
-| **Digital Twin** | Depends on, Related to | Depends on, Related to | Depends on |
-| **Method** | all types | Part of, Related to | all types |
-| **Software** | all types | Part of, Related to | all types |
-| **Other categories** | all types | all types | all types |
+![Relationship rules matrix](images/relation-matrix.png)
+
+*P = Part of, D = Depends on, R = Related to. The diagonal (same category) always allows all three types. Source (B) is the entry initiating the relationship; Target (A) is the entry it points to.*
 
 ### How the rules are applied
 
