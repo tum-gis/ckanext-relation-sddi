@@ -58,21 +58,6 @@ inv ChildOfMeansSubprojectToParent:
     )
 ```
 
-### `ProjectToProjectOnlyChildOf` (Project)
-
-Two Projects can only be connected with **Part of** or **Related to**. **Depends on** between two Projects is not allowed. A Project can still depend on entries of other categories.
-
-```
-context Project
-inv ProjectToProjectOnlyChildOf:
-  self.relation
-    ->select(r | r.oclIsKindOf(InternalLink))
-    ->forAll(r |
-      let l : InternalLink = r.oclAsType(InternalLink) in
-        l.target.oclIsKindOf(Project) implies l.type = RelType::child_of
-    )
-```
-
 ### `OutgoingConstraints` (Digital Twin)
 
 A Digital Twin:
@@ -110,7 +95,7 @@ An entry cannot be connected to itself (`l.target <> self` in the invariants abo
 
 | From \ To | Project | Digital Twin | Other categories |
 |---|---|---|---|
-| **Project** | Part of | Depends on, Related to | Depends on, Related to |
+| **Project** | Part of, Depends on, Related to | Depends on, Related to | Depends on, Related to |
 | **Digital Twin** | Depends on, Related to | Depends on, Related to | Depends on |
 | **Other categories** | all types | all types | all types |
 

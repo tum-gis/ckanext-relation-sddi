@@ -46,77 +46,24 @@
 
 
 
-.dataset-markers .marker.zero {
-  background: #e3731e;
-}
-
-.dataset-markers .marker.zero:after {
-  border-right-color: #bf5d13;
-}
-
-.dataset-markers .marker.one {
-  background: #346ce3;
-}
-
-.dataset-markers .marker.one:after {
-  border-right-color: #2b5abd;
-}
-
-.dataset-markers .marker.two {
-  background: #008a0b;
-}
-
-.dataset-markers .marker.two:after {
-  border-right-color: #016b0a;
-}
-
-.dataset-markers .marker.three {
-  background: #a6a6a6;
-}
-
-.dataset-markers .marker.three:after {
-  border-right-color: #8a8a8a;
-}
-
-.dataset-markers .marker.four {
-  background: #d13838;
-}
-
-.dataset-markers .marker.four:after {
-  border-right-color: #b03535;
-}
-
-.dataset-markers .marker.five {
-  background: #5fc4e3;
-}
-
-.dataset-markers .marker.five:after {
-  border-right-color: #4ea5bf;
-}
-
-.dataset-markers .marker.six {
-  background: #d10000;
-}
-
-.dataset-markers .marker.six:after {
-  border-right-color: #960202;
-}
-
-.dataset-markers .marker.seven {
-  background: #e36b99;
-}
-
-.dataset-markers .marker.seven:after {
-  border-right-color: #ba4974;
-}
-
-.dataset-markers .marker.eight {
-  background: #e74c3c;
-}
-
-.dataset-markers .marker.eight:after {
-  border-right-color: #cd3121;
-}
+.dataset-markers .marker.dataset            { background: #FF7F27; }
+.dataset-markers .marker.dataset:after      { border-right-color: #d96920; }
+.dataset-markers .marker.online-service     { background: #3F48CC; }
+.dataset-markers .marker.online-service:after { border-right-color: #333da8; }
+.dataset-markers .marker.project            { background: #008A0B; }
+.dataset-markers .marker.project:after      { border-right-color: #006508; }
+.dataset-markers .marker.software           { background: #7F7F7F; }
+.dataset-markers .marker.software:after     { border-right-color: #696969; }
+.dataset-markers .marker.online-application { background: #FFC90E; }
+.dataset-markers .marker.online-application:after { border-right-color: #d9ab0b; }
+.dataset-markers .marker.method             { background: #5FC4E3; }
+.dataset-markers .marker.method:after       { border-right-color: #4ea5bf; }
+.dataset-markers .marker.device             { background: #D10000; }
+.dataset-markers .marker.device:after       { border-right-color: #a80000; }
+.dataset-markers .marker.geoobject          { background: #B36F4A; }
+.dataset-markers .marker.geoobject:after    { border-right-color: #965c3c; }
+.dataset-markers .marker.digital-twin       { background: #A047A0; }
+.dataset-markers .marker.digital-twin:after { border-right-color: #883b88; }
 
 .dataset-markers .marker.free {
   background: #7f8c8d;

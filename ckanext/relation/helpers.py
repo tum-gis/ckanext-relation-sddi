@@ -3,10 +3,6 @@ import ckan.plugins.toolkit as tk
 # Relationship types that can be edited from the "Edit Relationship" tab
 RELATION_TYPES = ("child_of", "depends_on", "links_to")
 
-# Same order as the marker classes in group_label.css / marker.html
-MARKER_CLASSES = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight"]
-
-
 def _attr(obj, key):
     if isinstance(obj, dict):
         return obj.get(key)
@@ -14,20 +10,17 @@ def _attr(obj, key):
 
 
 def marker_info(pkg):
-    """Return {"cls": marker class (zero..eight or free), "title": main category title}."""
+    """Return {"cls": category slug (e.g. 'digital-twin') or 'free', "title": ...}."""
     try:
-        categories = tk.h.get_allowable_children_groups("main-categories") or []
         main_groups = tk.h.get_selected_group(pkg.get("groups", []), "main-categories") or []
     except Exception:
         return {"cls": "free", "title": None}
 
-    names = [_attr(c, "name") for c in categories[:len(MARKER_CLASSES)]]
-    # marker.html keeps the colour of the last matching group, do the same here
     for group in reversed(list(main_groups)):
         name = _attr(group, "name")
-        if name in names:
+        if name:
             return {
-                "cls": MARKER_CLASSES[names.index(name)],
+                "cls": name,
                 "title": _attr(group, "display_name") or _attr(group, "title") or name,
             }
     return {"cls": "free", "title": None}
@@ -61,13 +54,7 @@ RELATION_RULES = {
 # Exclusions per main category:
 #
 #   subject category -> relation type -> main categories the target may NOT have
-EXCLUDED_TARGETS = {
-    # context Project inv ProjectToProjectOnlyChildOf
-    #   two Projects can only be connected with child_of (sub-project -> parent project)
-    "project": {
-        "depends_on": {"project"},
-    },
-}
+EXCLUDED_TARGETS = {}
 
 # Relation types where subject and target must share at least one main category.
 # Applies to all categories that do not already have an explicit RELATION_RULES entry

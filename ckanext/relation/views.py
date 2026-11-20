@@ -220,15 +220,22 @@ class CreateResource(MethodView):
                         dict(context, allow_state_change=True),
                         dict(data_dict, state="active"),
                     )
-                    # h.flash_notice(_('Dataset has been deleted.'))
-                    print(
-                        "save action was go-datadict in the exntenstion NEEWWWW!!!!!!!!!!!"
-                    )
                     return h.redirect_to("/dataset/relationship/edit/" + id)
 
+                if save_action == "go-metadata":
+                    data_dict = tk.get_action("package_show")(context, {"id": id})
+                    tk.get_action("package_update")(
+                        dict(context, allow_state_change=True),
+                        dict(data_dict, state="active"),
+                    )
+                    pkg_type = data_dict.get("type", "dataset")
+                    return h.redirect_to("{}.read".format(pkg_type), id=id)
+
                 if save_action == "go-dataset":
-                    # go to final stage of adddataset
-                    return h.redirect_to(h.url_for('dataset.edit', id=id))
+                    data_dict = tk.get_action("package_show")(context, {"id": id})
+                    pkg_type = data_dict.get("type", "dataset")
+                    return h.redirect_to("{}.edit".format(pkg_type), id=id)
+
                 # see if we have added any resources
                 try:
                     data_dict = tk.get_action("package_show")(context, {"id": id})
@@ -243,8 +250,6 @@ class CreateResource(MethodView):
                 if require_resources and not len(data_dict["resources"]):
                     # no data so keep on page
                     msg = tk._("You must add at least one data resource")
-                    # On new templates do not use flash message
-
                     if tk.asbool(tk.config.get("ckan.legacy_templates")):
                         h.flash_error(msg)
                         return h.redirect_to('dataset.new', id=id)
@@ -259,7 +264,8 @@ class CreateResource(MethodView):
                     dict(context, allow_state_change=True),
                     dict(data_dict, state="active"),
                 )
-                return h.redirect_to(h.url_for('dataset.read', id=id))
+                pkg_type = data_dict.get("type", "dataset")
+                return h.redirect_to("{}.read".format(pkg_type), id=id)
 
             data["package_id"] = id
             try:
@@ -278,13 +284,13 @@ class CreateResource(MethodView):
                 tk.abort(404, tk._("The dataset {id} could not be found.").format(id=id))
 
             if save_action == "go-metadata":
-                # XXX race condition if another user edits/deletes
                 data_dict = tk.get_action("package_show")(context, {"id": id})
                 tk.get_action("package_update")(
                     dict(context, allow_state_change=True),
                     dict(data_dict, state="active"),
                 )
-                return h.redirect_to('dataset.read', id=id)
+                pkg_type = data_dict.get("type", "dataset")
+                return h.redirect_to("{}.read".format(pkg_type), id=id)
 
             elif save_action == "go-datadict":
                 data_dict = tk.get_action("package_show")(context, {"id": id})
@@ -292,18 +298,13 @@ class CreateResource(MethodView):
                     dict(context, allow_state_change=True),
                     dict(data_dict, state="active"),
                 )
-                # h.flash_notice(_('Dataset has been deleted.'))
-                print(
-                    "save action was go-datadict in the exntenstion NEEWWWW!!!!!!!!!!!"
-                )
                 return h.redirect_to("relation.edit_relation", id=id)
-            # redirect(h.url_for(controller='package', action='finaldict', id=id))
-            elif save_action == "go-dataset":
-                # go to first stage of add dataset
-                return h.redirect_to('dataset.edit', id=id)
-            elif save_action == "go-dataset-complete":
-                # go to first stage of add dataset
-                return h.redirect_to('dataset.edit', id=id)
+
+            elif save_action in ("go-dataset", "go-dataset-complete"):
+                data_dict = tk.get_action("package_show")(context, {"id": id})
+                pkg_type = data_dict.get("type", "dataset")
+                return h.redirect_to("{}.edit".format(pkg_type), id=id)
+
             else:
                 # add more resources
                 return h.redirect_to('resource.new', id=id)
@@ -401,7 +402,7 @@ def edit_relation(id, data=None, errors=None):
 relation.add_url_rule("/dataset/relationship/<id>", view_func=relations),
 relation.add_url_rule("/dataset/relationship/new_relationship/<id>", view_func=new_relation, methods=("GET", "POST")),
 relation.add_url_rule("/dataset/relationship/search/<id>", view_func=search_relation),
-relation.add_url_rule("/dataset/<id>/resource/new", view_func=CreateResource.as_view(str(u'new_res'))),
+relation.add_url_rule("/dataset_relation_resource/<id>/new", view_func=CreateResource.as_view(str(u'new_res'))),
 relation.add_url_rule("/dataset/relationship/add/<id>", view_func=finalrel, methods=("GET", "POST")),
 relation.add_url_rule("/dataset/relationship/edit/<id>", view_func=edit_relation, methods=("GET", "POST")),
 

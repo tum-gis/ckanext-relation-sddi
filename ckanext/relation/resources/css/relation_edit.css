@@ -439,16 +439,16 @@
   flex-shrink: 0;
 }
 
-.rel-marker-zero { background: #e3731e; }
-.rel-marker-one { background: #346ce3; }
-.rel-marker-two { background: #008a0b; }
-.rel-marker-three { background: #a6a6a6; }
-.rel-marker-four { background: #d13838; }
-.rel-marker-five { background: #5fc4e3; }
-.rel-marker-six { background: #d10000; }
-.rel-marker-seven { background: #e36b99; }
-.rel-marker-eight { background: #e74c3c; }
-.rel-marker-free { background: #7f8c8d; }
+.rel-marker-dataset            { background: #FF7F27; }
+.rel-marker-online-service     { background: #3F48CC; }
+.rel-marker-project            { background: #008A0B; }
+.rel-marker-software           { background: #7F7F7F; }
+.rel-marker-online-application { background: #FFC90E; }
+.rel-marker-method             { background: #5FC4E3; }
+.rel-marker-device             { background: #D10000; }
+.rel-marker-geoobject          { background: #B36F4A; }
+.rel-marker-digital-twin       { background: #A047A0; }
+.rel-marker-free               { background: #7f8c8d; }
 
 /* Inline search panel */
 
