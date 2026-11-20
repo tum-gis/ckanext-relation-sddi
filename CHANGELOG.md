@@ -11,8 +11,17 @@ For releases `< 1.0.0` minor version steps may indicate breaking changes too.
 - Enforcement of OCL relationship constraints from the SDDI model:
   - `SameCategoryPartOf`: **Part of** (`child_of`) relations can only be created between entries of the same main category.
   - `ChildOfMeansSubprojectToParent`: Project entries can only use `child_of` to target other Project entries.
-  - `ProjectToProjectOnlyChildOf`: ~~Project entries cannot use `depends_on` with other Project entries~~ — removed; Projects can now use all relation types with other Projects.
+  - `ProjectToProjectOnlyChildOf`: Projects can now use all relation types with other Projects.
   - `OutgoingConstraints` (DigitalTwin): `links_to` is restricted to DigitalTwin or Project targets; `child_of` follows the general same-category rule (a Digital Twin can be part of another Digital Twin).
+  - `MethodOutgoingRelations` (Method): `child_of` only to Method (same-category); `depends_on` not allowed for Digital Twin targets; `links_to` unrestricted. 
+  - `SoftwareOutgoingRelations` (Software): `depends_on` not allowed for Digital Twin targets.
+  - `OnlineApplicationOutgoingRelations` (Online Application): `depends_on` not allowed for Digital Twin targets.
+  - `OnlineServiceOutgoingRelations` (Online Service): `depends_on` not allowed for Digital Twin targets.
+  - `DeviceOutgoingRelations` (Device): `depends_on` not allowed for Digital Twin targets.
+  - `GeoObjectOutgoingRelations` (GeoObject): `depends_on` not allowed for Digital Twin targets.
+  - `DatasetAndDocumentsOutgoingRelations` (Dataset and Documents): `depends_on` not allowed for Digital Twin targets.
+  - `OutgoingConstraints` (Method): `depends_on` a Digital Twin is blocked.
+  - `OutgoingConstraints` (Software): `depends_on` a Digital Twin is blocked.
 
 ### Changed
 - Relation section cards now span full width of the editor area, making better use of available space.

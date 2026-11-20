@@ -87,6 +87,202 @@ inv OutgoingConstraints:
     )
 ```
 
+### `MethodOutgoingRelations` (Method)
+
+A Method:
+
+- can be **part of**, **depend on**, or **be related to** another Method,
+- can only be **related to** a Digital Twin (not **depend on** it),
+- can **depend on** or **be related to** entries of all other categories,
+- can be **part of** another Method only (same-category rule).
+
+```
+context Method
+inv MethodOutgoingRelations:
+  self.relation->select(r | r.oclIsKindOf(InternalLink))
+    ->forAll(r |
+      let il : InternalLink = r.oclAsType(InternalLink) in
+        if il.target.oclIsKindOf(Method) then
+          il.type = RelType::part_of or
+          il.type = RelType::related_to or
+          il.type = RelType::depends_on
+        else if il.target.oclIsKindOf(DigitalTwin) then
+          il.type = RelType::related_to
+        else
+          il.type = RelType::depends_on or
+          il.type = RelType::related_to
+        endif endif
+    )
+```
+
+### `SoftwareOutgoingRelations` (Software)
+
+A Software entry:
+
+- can be **part of**, **depend on**, or **be related to** another Software entry,
+- can only be **related to** a Digital Twin (not **depend on** it),
+- can **depend on** or **be related to** entries of all other categories,
+- can be **part of** another Software entry only (same-category rule).
+
+```
+context Software
+inv SoftwareOutgoingRelations:
+  self.relation->select(r | r.oclIsKindOf(InternalLink))
+    ->forAll(r |
+      let il : InternalLink = r.oclAsType(InternalLink) in
+        if il.target.oclIsKindOf(Software) then
+          il.type = RelType::part_of or
+          il.type = RelType::related_to or
+          il.type = RelType::depends_on
+        else if il.target.oclIsKindOf(DigitalTwin) then
+          il.type = RelType::related_to
+        else
+          il.type = RelType::depends_on or
+          il.type = RelType::related_to
+        endif endif
+    )
+```
+
+### `OnlineApplicationOutgoingRelations` (Online Application)
+
+An Online Application:
+
+- can be **part of**, **depend on**, or **be related to** another Online Application,
+- can only be **related to** a Digital Twin (not **depend on** it),
+- can **depend on** or **be related to** entries of all other categories,
+- can be **part of** another Online Application only (same-category rule).
+
+```
+context OnlineApplication
+inv OnlineApplicationOutgoingRelations:
+  self.relation->select(r | r.oclIsKindOf(InternalLink))
+    ->forAll(r |
+      let il : InternalLink = r.oclAsType(InternalLink) in
+        if il.target.oclIsKindOf(OnlineApplication) then
+          il.type = RelType::part_of or
+          il.type = RelType::related_to or
+          il.type = RelType::depends_on
+        else if il.target.oclIsKindOf(DigitalTwin) then
+          il.type = RelType::related_to
+        else
+          il.type = RelType::depends_on or
+          il.type = RelType::related_to
+        endif endif
+    )
+```
+
+### `OnlineServiceOutgoingRelations` (Online Service)
+
+An Online Service:
+
+- can be **part of**, **depend on**, or **be related to** another Online Service,
+- can only be **related to** a Digital Twin (not **depend on** it),
+- can **depend on** or **be related to** entries of all other categories,
+- can be **part of** another Online Service only (same-category rule).
+
+```
+context OnlineService
+inv OnlineServiceOutgoingRelations:
+  self.relation->select(r | r.oclIsKindOf(InternalLink))
+    ->forAll(r |
+      let il : InternalLink = r.oclAsType(InternalLink) in
+        if il.target.oclIsKindOf(OnlineService) then
+          il.type = RelType::part_of or
+          il.type = RelType::related_to or
+          il.type = RelType::depends_on
+        else if il.target.oclIsKindOf(DigitalTwin) then
+          il.type = RelType::related_to
+        else
+          il.type = RelType::depends_on or
+          il.type = RelType::related_to
+        endif endif
+    )
+```
+
+### `DeviceOutgoingRelations` (Device)
+
+A Device:
+
+- can be **part of**, **depend on**, or **be related to** another Device,
+- can only be **related to** a Digital Twin (not **depend on** it),
+- can **depend on** or **be related to** entries of all other categories,
+- can be **part of** another Device only (same-category rule).
+
+```
+context Device
+inv DeviceOutgoingRelations:
+  self.relation->select(r | r.oclIsKindOf(InternalLink))
+    ->forAll(r |
+      let il : InternalLink = r.oclAsType(InternalLink) in
+        if il.target.oclIsKindOf(Device) then
+          il.type = RelType::part_of or
+          il.type = RelType::related_to or
+          il.type = RelType::depends_on
+        else if il.target.oclIsKindOf(DigitalTwin) then
+          il.type = RelType::related_to
+        else
+          il.type = RelType::depends_on or
+          il.type = RelType::related_to
+        endif endif
+    )
+```
+
+### `GeoObjectOutgoingRelations` (GeoObject)
+
+A GeoObject:
+
+- can be **part of**, **depend on**, or **be related to** another GeoObject,
+- can only be **related to** a Digital Twin (not **depend on** it),
+- can **depend on** or **be related to** entries of all other categories,
+- can be **part of** another GeoObject only (same-category rule).
+
+```
+context GeoObject
+inv GeoObjectOutgoingRelations:
+  self.relation->select(r | r.oclIsKindOf(InternalLink))
+    ->forAll(r |
+      let il : InternalLink = r.oclAsType(InternalLink) in
+        if il.target.oclIsKindOf(GeoObject) then
+          il.type = RelType::part_of or
+          il.type = RelType::related_to or
+          il.type = RelType::depends_on
+        else if il.target.oclIsKindOf(DigitalTwin) then
+          il.type = RelType::related_to
+        else
+          il.type = RelType::depends_on or
+          il.type = RelType::related_to
+        endif endif
+    )
+```
+
+### `DatasetAndDocumentsOutgoingRelations` (Dataset and Documents)
+
+A Dataset and Documents entry:
+
+- can be **part of**, **depend on**, or **be related to** another Dataset and Documents entry,
+- can only be **related to** a Digital Twin (not **depend on** it),
+- can **depend on** or **be related to** entries of all other categories,
+- can be **part of** another Dataset and Documents entry only (same-category rule).
+
+```
+context DatasetAndDocuments
+inv DatasetAndDocumentsOutgoingRelations:
+  self.relation->select(r | r.oclIsKindOf(InternalLink))
+    ->forAll(r |
+      let il : InternalLink = r.oclAsType(InternalLink) in
+        if il.target.oclIsKindOf(DatasetAndDocuments) then
+          il.type = RelType::part_of or
+          il.type = RelType::related_to or
+          il.type = RelType::depends_on
+        else if il.target.oclIsKindOf(DigitalTwin) then
+          il.type = RelType::related_to
+        else
+          il.type = RelType::depends_on or
+          il.type = RelType::related_to
+        endif endif
+    )
+```
+
 ### No self-relationships (all categories)
 
 An entry cannot be connected to itself (`l.target <> self` in the invariants above). This applies to all main categories.
@@ -97,6 +293,8 @@ An entry cannot be connected to itself (`l.target <> self` in the invariants abo
 |---|---|---|---|
 | **Project** | Part of, Depends on, Related to | Depends on, Related to | Depends on, Related to |
 | **Digital Twin** | Depends on, Related to | Depends on, Related to | Depends on |
+| **Method** | all types | Part of, Related to | all types |
+| **Software** | all types | Part of, Related to | all types |
 | **Other categories** | all types | all types | all types |
 
 ### How the rules are applied
@@ -122,8 +320,13 @@ RELATION_RULES = {
 }
 
 # subject category -> relation type -> main categories the target must NOT have
-EXCLUDED_TARGETS = {
-    "project": {"depends_on": {"project"}},
+# (violation shown as a hint in the UI)
+EXCLUDED_TARGETS = {}
+
+# Same as EXCLUDED_TARGETS but enforced silently — no hint shown in the UI
+SILENT_EXCLUDED_TARGETS = {
+    "method":   {"depends_on": {"digital-twin"}},
+    "software": {"depends_on": {"digital-twin"}},
 }
 ```
 

@@ -51,10 +51,28 @@ RELATION_RULES = {
     },
 }
 
-# Exclusions per main category:
+# Exclusions per main category (shown as a hint in the UI):
 #
 #   subject category -> relation type -> main categories the target may NOT have
 EXCLUDED_TARGETS = {}
+
+# Same structure as EXCLUDED_TARGETS but enforced silently — no UI hint shown.
+SILENT_EXCLUDED_TARGETS = {
+    # context Method inv MethodOutgoingRelations
+    "method": {"depends_on": {"digital-twin"}},
+    # context Software inv SoftwareOutgoingRelations
+    "software": {"depends_on": {"digital-twin"}},
+    # context OnlineApplication inv OnlineApplicationOutgoingRelations
+    "online-application": {"depends_on": {"digital-twin"}},
+    # context OnlineService inv OnlineServiceOutgoingRelations
+    "online-service": {"depends_on": {"digital-twin"}},
+    # context Device inv DeviceOutgoingRelations
+    "device": {"depends_on": {"digital-twin"}},
+    # context GeoObject inv GeoObjectOutgoingRelations
+    "geoobject": {"depends_on": {"digital-twin"}},
+    # context DatasetAndDocuments inv DatasetAndDocumentsOutgoingRelations
+    "dataset": {"depends_on": {"digital-twin"}},
+}
 
 # Relation types where subject and target must share at least one main category.
 # Applies to all categories that do not already have an explicit RELATION_RULES entry
@@ -155,6 +173,9 @@ def relation_violation(subject, target, rel_type):
         excluded = EXCLUDED_TARGETS.get(category, {}).get(rel_type)
         if excluded and excluded & target_categories:
             return _exclusion_message(category, rel_type, excluded)
+        silent_excluded = SILENT_EXCLUDED_TARGETS.get(category, {}).get(rel_type)
+        if silent_excluded and silent_excluded & target_categories:
+            return _exclusion_message(category, rel_type, silent_excluded)
     return None
 
 
